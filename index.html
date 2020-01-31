@@ -1,0 +1,345 @@
+<!-- //create 10x10 player grid
+//create 10x10 tracking grid (small)
+
+//create ships
+//randomize ship position-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="Battleship board game">
+	<meta name="viewport" content="width=device-width, initial-scale=1" >
+	<title>Battleship</title>
+
+	<style type="text/css">
+
+		*, *:before, *:after{
+			box-sizing: border-box;
+		}
+		
+		html,body{
+			height: 100%;
+			font-size: 20px;
+			font-family: "Century Gothic", sans;
+		}
+
+		.header{
+			display: flex;
+			width:100%;
+			justify-content: center;
+			background-color: rgba(0,0,0,.1);
+
+		}
+
+		.grid{
+			border:1px solid rgba(142, 151, 199, 0.3);
+			height: 50px;
+
+		}
+		.player-grid{
+			height: 100vh;
+		}
+
+		.row-container{
+			display: flex;
+	
+			/*background-color: grey;*/
+		}
+
+		.row-header-container{
+			display: flex;
+			flex-direction: column;
+			width:calc(100%/11);
+
+		}
+
+		.row-content-container{
+			
+			width: calc(100% - calc(100%/11) );
+			background: url("background.jpg");
+			background-size: cover;
+			background-position: bottom;
+			color: white;
+			display: grid;
+			grid-template-rows:repeat(10, 1fr); 
+			grid-template-columns: repeat(10, 1fr);
+			text-align: center;
+		}
+
+
+
+		.row-content-container>*{
+			box-shadow: inset -1px 2px 6px #545252;
+		}
+
+	</style>
+</head>
+<body>
+	<section class="player-grid">
+		<div class="grid row header">
+			<div class="grid header column">=</div>
+			<div class="grid header column">A</div>
+			<div class="grid header column">B</div>
+			<div class="grid header column">C</div>
+			<div class="grid header column">D</div>
+			<div class="grid header column">E</div>
+			<div class="grid header column">F</div>
+			<div class="grid header column">G</div>
+			<div class="grid header column">H</div>
+			<div class="grid header column">I</div>
+			<div class="grid header column">J</div>
+		</div>	
+
+		<div class="row-container">
+			<div class="row-header-container">
+				<div class="grid row header"> 0</div>
+				<div class="grid row header"> 1</div>
+				<div class="grid row header"> 2</div>
+				<div class="grid row header"> 3</div>
+				<div class="grid row header"> 4</div>
+				<div class="grid row header"> 5</div>
+				<div class="grid row header"> 6</div>
+				<div class="grid row header"> 7</div>
+				<div class="grid row header"> 8</div>
+				<div class="grid row header"> 9</div>
+			</div>
+			<div class="row-content-container">
+				<div class="grid row" id="0A"> x</div>
+				<div class="grid row" id="0B"> x</div>
+				<div class="grid row" id="0C"> x</div>
+				<div class="grid row" id="0D"> x</div>
+				<div class="grid row" id="0E"> x</div>
+				<div class="grid row" id="0F"> x</div>
+				<div class="grid row" id="0G"> x</div>
+				<div class="grid row" id="0H"> x</div>
+				<div class="grid row" id="0I"> x</div>
+				<div class="grid row" id="0J"> x</div>
+
+				<div class="grid row" id="1A"> x</div>
+				<div class="grid row" id="1B"> x</div>
+				<div class="grid row" id="1C"> x</div>
+				<div class="grid row" id="1D"> x</div>
+				<div class="grid row" id="1E"> x</div>
+				<div class="grid row" id="1F"> x</div>
+				<div class="grid row" id="1G"> x</div>
+				<div class="grid row" id="1H"> x</div>
+				<div class="grid row" id="1I"> x</div>
+				<div class="grid row" id="1J"> x</div>
+
+				<div class="grid row" id="2A"> x</div>
+				<div class="grid row" id="2B"> x</div>
+				<div class="grid row" id="2C"> x</div>
+				<div class="grid row" id="2D"> x</div>
+				<div class="grid row" id="2E"> x</div>
+				<div class="grid row" id="2F"> x</div>
+				<div class="grid row" id="2G"> x</div>
+				<div class="grid row" id="2H"> x</div>
+				<div class="grid row" id="2I"> x</div>
+				<div class="grid row" id="2J"> x</div>
+
+				<div class="grid row" id="3A"> x</div>
+				<div class="grid row" id="3B"> x</div>
+				<div class="grid row" id="3C"> x</div>
+				<div class="grid row" id="3D"> x</div>
+				<div class="grid row" id="3E"> x</div>
+				<div class="grid row" id="3F"> x</div>
+				<div class="grid row" id="3G"> x</div>
+				<div class="grid row" id="3H"> x</div>
+				<div class="grid row" id="3I"> x</div>
+				<div class="grid row" id="3J"> x</div>
+
+				<div class="grid row" id="4A"> x</div>
+				<div class="grid row" id="4B"> x</div>
+				<div class="grid row" id="4C"> x</div>
+				<div class="grid row" id="4D"> x</div>
+				<div class="grid row" id="4E"> x</div>
+				<div class="grid row" id="4F"> x</div>
+				<div class="grid row" id="4G"> x</div>
+				<div class="grid row" id="4H"> x</div>
+				<div class="grid row" id="4I"> x</div>
+				<div class="grid row" id="4J"> x</div>
+
+				<div class="grid row" id="5A"> x</div>
+				<div class="grid row" id="5B"> x</div>
+				<div class="grid row" id="5C"> x</div>
+				<div class="grid row" id="5D"> x</div>
+				<div class="grid row" id="5E"> x</div>
+				<div class="grid row" id="5F"> x</div>
+				<div class="grid row" id="5G"> x</div>
+				<div class="grid row" id="5H"> x</div>
+				<div class="grid row" id="5I"> x</div>
+				<div class="grid row" id="5J"> x</div>
+
+				<div class="grid row" id="6A"> x</div>
+				<div class="grid row" id="6B"> x</div>
+				<div class="grid row" id="6C"> x</div>
+				<div class="grid row" id="6D"> x</div>
+				<div class="grid row" id="6E"> x</div>
+				<div class="grid row" id="6F"> x</div>
+				<div class="grid row" id="6G"> x</div>
+				<div class="grid row" id="6H"> x</div>
+				<div class="grid row" id="6I"> x</div>
+				<div class="grid row" id="6J"> x</div>
+
+				<div class="grid row" id="7A"> x</div>
+				<div class="grid row" id="7B"> x</div>
+				<div class="grid row" id="7C"> x</div>
+				<div class="grid row" id="7D"> x</div>
+				<div class="grid row" id="7E"> x</div>
+				<div class="grid row" id="7F"> x</div>
+				<div class="grid row" id="7G"> x</div>
+				<div class="grid row" id="7H"> x</div>
+				<div class="grid row" id="7I"> x</div>
+				<div class="grid row" id="7J"> x</div>
+
+				<div class="grid row" id="8A"> x</div>
+				<div class="grid row" id="8B"> x</div>
+				<div class="grid row" id="8C"> x</div>
+				<div class="grid row" id="8D"> x</div>
+				<div class="grid row" id="8E"> x</div>
+				<div class="grid row" id="8F"> x</div>
+				<div class="grid row" id="8G"> x</div>
+				<div class="grid row" id="8H"> x</div>
+				<div class="grid row" id="8I"> x</div>
+				<div class="grid row" id="8J"> x</div>
+
+				<div class="grid row" id="9A"> x</div>
+				<div class="grid row" id="9B"> x</div>
+				<div class="grid row" id="9C"> x</div>
+				<div class="grid row" id="9D"> x</div>
+				<div class="grid row" id="9E"> x</div>
+				<div class="grid row" id="9F"> x</div>
+				<div class="grid row" id="9G"> x</div>
+				<div class="grid row" id="9H"> x</div>
+				<div class="grid row" id="9I"> x</div>
+				<div class="grid row" id="9J"> x</div>
+			
+
+			</div>
+		</div>
+
+			
+		<!-- 
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>		
+		</div>
+		<div class="grid row header"> 1
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>		
+		</div>
+		<div class="grid row header"> 2
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>		
+		</div>
+		<div class="grid row header"> 3
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>		
+		</div>
+		<div class="grid row header"> 4
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>		
+		</div>
+		<div class="grid row header"> 5
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>		
+		</div>
+		<div class="grid row header"> 6
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>		
+		</div>
+		<div class="grid row header"> 7
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>		
+		</div>
+		<div class="grid row header"> 8
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>		
+		</div>
+		<div class="grid row header"> 9
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>
+			<div class="grid column"></div>		
+		</div> -->
+	</section>
+</body>
+</html>
+
