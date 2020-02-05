@@ -4,7 +4,7 @@ const ships=[
 	{name:"battleship",size:4,coordinates:[],color:"grey"	},
 	{name:"submarine",size:3,coordinates:[],color:"green"	},
 	{name:"cruiser",size:3,coordinates:[],color:"orange"	},
-	{name:"destroyer",size:2,coordinates:[],color:"yellow"	}
+	{name:"destroyer",size:2,coordinates:[],color:"gold"	}
 ]
 
 const grid={
@@ -90,7 +90,7 @@ ships.forEach(ship=>{
 			console.log(`${ship.name} won't fit here`);
 		}else{
 			console.log(`${ship.name} should fit here`);
-			buildShip(build);	
+			mapCoordinates(build);	
 		}
 	}
 
@@ -99,7 +99,8 @@ ships.forEach(ship=>{
 	
 });
 
-function buildShip(build){
+function mapCoordinates(build){
+	let tempCoords =[];
 	for(let i=build.index; i<build.index+build.ship.size; i++){
 		let secondAxisType=build.secondAxisType;
 		let rowCoord, colCoord; //build in same order as HTML "id"s
@@ -112,24 +113,45 @@ function buildShip(build){
 		}
 
 		let coord= rowCoord+colCoord;
-		if(!(unusedCoords.includes(coord))){
-			console.log("ship overlaps, no good");
-			break;
-		}
+		// if(!(unusedCoords.includes(coord))){
+		// 	console.log("ship overlaps, no good");
+		// 	break;
+		// }
 		// console.log(`in build ship, 2nd axis is ${secondAxisType}`);
 
 		console.log(`coord is ${build.axisType}:${grid[build.axisType][i]},${build.startCoord[secondAxisType]}`);
 
-
-		build.ship.coordinates.push(coord);
-		unusedCoords.splice((unusedCoords.findIndex(el=>el===coord)),1);
+		
+		tempCoords.push(coord); //will check these for overlap
+		console.log(tempCoords);
 		// console.log(unusedCoords);
 		// console.log(`ship has coordinates:${build.ship.coordinates}`);
 	}
-	drawShip(build.ship);
+
+	function noOverlap(coord){
+		return unusedCoords.includes(coord);
+	}
+
+	console.log(tempCoords.every(noOverlap));
+	
+	if(tempCoords.every(noOverlap)){
+		buildShip(build.ship,tempCoords)
+	}else{
+		console.log("ship overlaps, no good");
+		return;
+	}
+	
 };
 
-function drawShip(ship){
+function buildShip(ship,tempCoords){
+	tempCoords.forEach(coord=>{
+		ship.coordinates.push(coord);
+		unusedCoords.splice((unusedCoords.findIndex(el=>el===coord)),1);
+		drawShip(ship);
+	})
+}
+
+function drawShip(ship){ 
 	ship.coordinates.forEach(coordinate=>{
 		let tile=document.getElementById(coordinate);
 		tile.innerHTML="Y";
