@@ -37,7 +37,7 @@
 
 		}
 		.player-grid{
-			height: 100vh;
+			/*height: 100vh;*/
 		}
 
 		.row-container{
@@ -70,6 +70,17 @@
 
 		.row-content-container>*{
 			box-shadow: inset -1px 2px 6px #545252;
+		}
+		.row-content-container>*:hover{
+	/*		opacity: 0.2;	*/
+			cursor: pointer;
+			border:1px solid yellow;	
+		}
+
+		.lives{
+			display: flex;
+			justify-content: space-around;
+			flex-wrap: wrap;
 		}
 
 	</style>
@@ -104,242 +115,133 @@
 				<div class="grid row header"> 9</div>
 			</div>
 			<div class="row-content-container">
-				<div class="grid row" id="0A"> x</div>
-				<div class="grid row" id="0B"> x</div>
-				<div class="grid row" id="0C"> x</div>
-				<div class="grid row" id="0D"> x</div>
-				<div class="grid row" id="0E"> x</div>
-				<div class="grid row" id="0F"> x</div>
-				<div class="grid row" id="0G"> x</div>
-				<div class="grid row" id="0H"> x</div>
-				<div class="grid row" id="0I"> x</div>
-				<div class="grid row" id="0J"> x</div>
+				<div class="grid row" id="0A"> </div>
+				<div class="grid row" id="0B"> </div>
+				<div class="grid row" id="0C"> </div>
+				<div class="grid row" id="0D"> </div>
+				<div class="grid row" id="0E"> </div>
+				<div class="grid row" id="0F"> </div>
+				<div class="grid row" id="0G"> </div>
+				<div class="grid row" id="0H"> </div>
+				<div class="grid row" id="0I"> </div>
+				<div class="grid row" id="0J"> </div>
 
-				<div class="grid row" id="1A"> x</div>
-				<div class="grid row" id="1B"> x</div>
-				<div class="grid row" id="1C"> x</div>
-				<div class="grid row" id="1D"> x</div>
-				<div class="grid row" id="1E"> x</div>
-				<div class="grid row" id="1F"> x</div>
-				<div class="grid row" id="1G"> x</div>
-				<div class="grid row" id="1H"> x</div>
-				<div class="grid row" id="1I"> x</div>
-				<div class="grid row" id="1J"> x</div>
+				<div class="grid row" id="1A"> </div>
+				<div class="grid row" id="1B"> </div>
+				<div class="grid row" id="1C"> </div>
+				<div class="grid row" id="1D"> </div>
+				<div class="grid row" id="1E"> </div>
+				<div class="grid row" id="1F"> </div>
+				<div class="grid row" id="1G"> </div>
+				<div class="grid row" id="1H"> </div>
+				<div class="grid row" id="1I"> </div>
+				<div class="grid row" id="1J"> </div>
 
-				<div class="grid row" id="2A"> x</div>
-				<div class="grid row" id="2B"> x</div>
-				<div class="grid row" id="2C"> x</div>
-				<div class="grid row" id="2D"> x</div>
-				<div class="grid row" id="2E"> x</div>
-				<div class="grid row" id="2F"> x</div>
-				<div class="grid row" id="2G"> x</div>
-				<div class="grid row" id="2H"> x</div>
-				<div class="grid row" id="2I"> x</div>
-				<div class="grid row" id="2J"> x</div>
+				<div class="grid row" id="2A"> </div>
+				<div class="grid row" id="2B"> </div>
+				<div class="grid row" id="2C"> </div>
+				<div class="grid row" id="2D"> </div>
+				<div class="grid row" id="2E"> </div>
+				<div class="grid row" id="2F"> </div>
+				<div class="grid row" id="2G"> </div>
+				<div class="grid row" id="2H"> </div>
+				<div class="grid row" id="2I"> </div>
+				<div class="grid row" id="2J"> </div>
 
-				<div class="grid row" id="3A"> x</div>
-				<div class="grid row" id="3B"> x</div>
-				<div class="grid row" id="3C"> x</div>
-				<div class="grid row" id="3D"> x</div>
-				<div class="grid row" id="3E"> x</div>
-				<div class="grid row" id="3F"> x</div>
-				<div class="grid row" id="3G"> x</div>
-				<div class="grid row" id="3H"> x</div>
-				<div class="grid row" id="3I"> x</div>
-				<div class="grid row" id="3J"> x</div>
+				<div class="grid row" id="3A"> </div>
+				<div class="grid row" id="3B"> </div>
+				<div class="grid row" id="3C"> </div>
+				<div class="grid row" id="3D"> </div>
+				<div class="grid row" id="3E"> </div>
+				<div class="grid row" id="3F"> </div>
+				<div class="grid row" id="3G"> </div>
+				<div class="grid row" id="3H"> </div>
+				<div class="grid row" id="3I"> </div>
+				<div class="grid row" id="3J"> </div>
 
-				<div class="grid row" id="4A"> x</div>
-				<div class="grid row" id="4B"> x</div>
-				<div class="grid row" id="4C"> x</div>
-				<div class="grid row" id="4D"> x</div>
-				<div class="grid row" id="4E"> x</div>
-				<div class="grid row" id="4F"> x</div>
-				<div class="grid row" id="4G"> x</div>
-				<div class="grid row" id="4H"> x</div>
-				<div class="grid row" id="4I"> x</div>
-				<div class="grid row" id="4J"> x</div>
+				<div class="grid row" id="4A"> </div>
+				<div class="grid row" id="4B"> </div>
+				<div class="grid row" id="4C"> </div>
+				<div class="grid row" id="4D"> </div>
+				<div class="grid row" id="4E"> </div>
+				<div class="grid row" id="4F"> </div>
+				<div class="grid row" id="4G"> </div>
+				<div class="grid row" id="4H"> </div>
+				<div class="grid row" id="4I"> </div>
+				<div class="grid row" id="4J"> </div>
 
-				<div class="grid row" id="5A"> x</div>
-				<div class="grid row" id="5B"> x</div>
-				<div class="grid row" id="5C"> x</div>
-				<div class="grid row" id="5D"> x</div>
-				<div class="grid row" id="5E"> x</div>
-				<div class="grid row" id="5F"> x</div>
-				<div class="grid row" id="5G"> x</div>
-				<div class="grid row" id="5H"> x</div>
-				<div class="grid row" id="5I"> x</div>
-				<div class="grid row" id="5J"> x</div>
+				<div class="grid row" id="5A"> </div>
+				<div class="grid row" id="5B"> </div>
+				<div class="grid row" id="5C"> </div>
+				<div class="grid row" id="5D"> </div>
+				<div class="grid row" id="5E"> </div>
+				<div class="grid row" id="5F"> </div>
+				<div class="grid row" id="5G"> </div>
+				<div class="grid row" id="5H"> </div>
+				<div class="grid row" id="5I"> </div>
+				<div class="grid row" id="5J"> </div>
 
-				<div class="grid row" id="6A"> x</div>
-				<div class="grid row" id="6B"> x</div>
-				<div class="grid row" id="6C"> x</div>
-				<div class="grid row" id="6D"> x</div>
-				<div class="grid row" id="6E"> x</div>
-				<div class="grid row" id="6F"> x</div>
-				<div class="grid row" id="6G"> x</div>
-				<div class="grid row" id="6H"> x</div>
-				<div class="grid row" id="6I"> x</div>
-				<div class="grid row" id="6J"> x</div>
+				<div class="grid row" id="6A"> </div>
+				<div class="grid row" id="6B"> </div>
+				<div class="grid row" id="6C"> </div>
+				<div class="grid row" id="6D"> </div>
+				<div class="grid row" id="6E"> </div>
+				<div class="grid row" id="6F"> </div>
+				<div class="grid row" id="6G"> </div>
+				<div class="grid row" id="6H"> </div>
+				<div class="grid row" id="6I"> </div>
+				<div class="grid row" id="6J"> </div>
 
-				<div class="grid row" id="7A"> x</div>
-				<div class="grid row" id="7B"> x</div>
-				<div class="grid row" id="7C"> x</div>
-				<div class="grid row" id="7D"> x</div>
-				<div class="grid row" id="7E"> x</div>
-				<div class="grid row" id="7F"> x</div>
-				<div class="grid row" id="7G"> x</div>
-				<div class="grid row" id="7H"> x</div>
-				<div class="grid row" id="7I"> x</div>
-				<div class="grid row" id="7J"> x</div>
+				<div class="grid row" id="7A"> </div>
+				<div class="grid row" id="7B"> </div>
+				<div class="grid row" id="7C"> </div>
+				<div class="grid row" id="7D"> </div>
+				<div class="grid row" id="7E"> </div>
+				<div class="grid row" id="7F"> </div>
+				<div class="grid row" id="7G"> </div>
+				<div class="grid row" id="7H"> </div>
+				<div class="grid row" id="7I"> </div>
+				<div class="grid row" id="7J"> </div>
 
-				<div class="grid row" id="8A"> x</div>
-				<div class="grid row" id="8B"> x</div>
-				<div class="grid row" id="8C"> x</div>
-				<div class="grid row" id="8D"> x</div>
-				<div class="grid row" id="8E"> x</div>
-				<div class="grid row" id="8F"> x</div>
-				<div class="grid row" id="8G"> x</div>
-				<div class="grid row" id="8H"> x</div>
-				<div class="grid row" id="8I"> x</div>
-				<div class="grid row" id="8J"> x</div>
+				<div class="grid row" id="8A"> </div>
+				<div class="grid row" id="8B"> </div>
+				<div class="grid row" id="8C"> </div>
+				<div class="grid row" id="8D"> </div>
+				<div class="grid row" id="8E"> </div>
+				<div class="grid row" id="8F"> </div>
+				<div class="grid row" id="8G"> </div>
+				<div class="grid row" id="8H"> </div>
+				<div class="grid row" id="8I"> </div>
+				<div class="grid row" id="8J"> </div>
 
-				<div class="grid row" id="9A"> x</div>
-				<div class="grid row" id="9B"> x</div>
-				<div class="grid row" id="9C"> x</div>
-				<div class="grid row" id="9D"> x</div>
-				<div class="grid row" id="9E"> x</div>
-				<div class="grid row" id="9F"> x</div>
-				<div class="grid row" id="9G"> x</div>
-				<div class="grid row" id="9H"> x</div>
-				<div class="grid row" id="9I"> x</div>
-				<div class="grid row" id="9J"> x</div>
+				<div class="grid row" id="9A"> </div>
+				<div class="grid row" id="9B"> </div>
+				<div class="grid row" id="9C"> </div>
+				<div class="grid row" id="9D"> </div>
+				<div class="grid row" id="9E"> </div>
+				<div class="grid row" id="9F"> </div>
+				<div class="grid row" id="9G"> </div>
+				<div class="grid row" id="9H"> </div>
+				<div class="grid row" id="9I"> </div>
+				<div class="grid row" id="9J"> </div>
 			
 
 			</div>
 		</div>
 
 			
-		<!-- 
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>		
-		</div>
-		<div class="grid row header"> 1
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>		
-		</div>
-		<div class="grid row header"> 2
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>		
-		</div>
-		<div class="grid row header"> 3
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>		
-		</div>
-		<div class="grid row header"> 4
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>		
-		</div>
-		<div class="grid row header"> 5
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>		
-		</div>
-		<div class="grid row header"> 6
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>		
-		</div>
-		<div class="grid row header"> 7
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>		
-		</div>
-		<div class="grid row header"> 8
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>		
-		</div>
-		<div class="grid row header"> 9
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>
-			<div class="grid column"></div>		
-		</div> -->
+		
 	</section>
+
+	<section class="lives">
+		<p id="carrier">Carrier</p>
+		<p id="battleship">Battleship</p>
+		<p id="cruiser">Cruiser</p>
+		<p id="submarine">Submarine</p>
+		<p id="destroyer">Destroyer</p>
+	</section>
+
+	<script src="battleship.js"></script>
 </body>
 </html>
 
