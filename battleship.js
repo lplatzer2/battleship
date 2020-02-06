@@ -27,6 +27,12 @@ function setGrid(){
 	return arr;
 }
 
+//build ship around random coordinate
+ships.forEach(ship=>{
+	getStartCoord(ship);
+	
+});
+
 // create function to determine coordinates
 function getRandCoord(){
 	let startRow =getRandomInt(grid.row.length);
@@ -38,12 +44,9 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
 
+function getStartCoord(ship){
 
-
-//build ship around random coordinate
-ships.forEach(ship=>{
-
-	//flip coin for 0 or 1
+//flip coin for 0 or 1
 	let axis = getRandomInt(2);
 	let secondAxis;
 	console.log(axis);
@@ -62,42 +65,42 @@ ships.forEach(ship=>{
 	console.log(`primary axis type is ${axisType}`);
 	console.log(`starting coord is ${startCoord.row},${startCoord.column}`);
 	
+	//avoids passing too many params
+	let build= 	{
+				startCoord:startCoord,
+				axisType:axisType,
+				secondAxisType:secondAxisType
+			};
+	checkCoordinates(ship,build);
+}
 
-	checkCoordinates(axisType,secondAxisType);
 
-	//add the ship's length to the starting coord to make sure space exists, if not flip directions + check again, if all 4 directions fail, pick another coordinate
-	function checkCoordinates(axisType,secondAxisType){
+//add the ship's length to the starting coord to make sure space exists, if not flip directions + check again, if all 4 directions fail, pick another coordinate
+	function checkCoordinates(ship,build){
 
 		// console.log(`within function, startCoord[row]: ${startCoord[axisType]}`);
 
 		// console.log(`start at index ${grid[axisType].indexOf(startCoord[axisType])}`);
 
-		let index = grid[axisType].indexOf(startCoord[axisType]);
+		let index = grid[build.axisType].indexOf(build.startCoord[build.axisType]);
 		console.log(`index is ${index}`);
 		console.log(`index+ ship size is ${index+ship.size-1}`);
 
+		//using build for all variables that would normally be global
+		build.index=index;
+		build.ship=ship;
 
-		let build={ //avoids passing too many params to buildShip()
-			startCoord:startCoord,
-			index:index,
-			ship:ship,
-			axisType:axisType,
-			secondAxisType:secondAxisType
-		};
-
-
-		if(!grid[axisType][index+ship.size-1]){
+		if(!grid[build.axisType][index+ship.size-1]){
 			console.log(`${ship.name} won't fit here`);
+			getStartCoord(build.ship);
+
 		}else{
 			console.log(`${ship.name} should fit here`);
 			mapCoordinates(build);	
 		}
 	}
 
-	
-	
-	
-});
+
 
 function mapCoordinates(build){
 	let tempCoords =[];
@@ -138,7 +141,7 @@ function mapCoordinates(build){
 		buildShip(build.ship,tempCoords)
 	}else{
 		console.log("ship overlaps, no good");
-		return;
+		getStartCoord(build.ship);
 	}
 	
 };
@@ -159,3 +162,45 @@ function drawShip(ship){
 		// console.log(tile);
 	})
 };
+
+//check if guess is a hit or miss
+let opponentGrid=document.querySelectorAll(".row-content-container>div");
+opponentGrid.forEach(tile=>{
+	tile.addEventListener("click", checkGuess);
+});
+
+function checkGuess(e){
+	console.log(this);
+	let id =e.target.id;
+	if(unusedCoords.includes(id)){
+		console.log(`Miss on ${id}`);
+		this.style.backgroundColor="white";
+	}else{
+		console.log(`Hit on ${id}`);
+		this.style.backgroundColor="red";
+		hitShip(id);
+	}
+};
+//determine which ship was hit
+function hitShip(id){
+	ships.forEach(ship=>{
+		if(ship.coordinates.includes(id)){
+			console.log(`${ship.name} was hit!`);
+			//remove tile from ship's coordinates
+			ship.coordinates.splice((ship.coordinates.findIndex(el=>el===id)),1);
+			console.log(`ship's coordinates length now${ship.coordinates.length}`);
+			//check if sunk
+			hasSunk(ship);
+		}
+	})
+}
+//check if ship has sunk
+function hasSunk(ship){
+	if(ship.coordinates.length===0){
+		console.log(`${ship.name} has sunk!`);
+		document.getElementById(ship.name).style.textDecoration="line-through";
+
+	}
+
+
+}
