@@ -1,11 +1,8 @@
-//create ship objects
-const ships=[
-	{name:"carrier",size:5,coordinates:[], color:"blue"		},
-	{name:"battleship",size:4,coordinates:[],color:"grey"	},
-	{name:"submarine",size:3,coordinates:[],color:"green"	},
-	{name:"cruiser",size:3,coordinates:[],color:"orange"	},
-	{name:"destroyer",size:2,coordinates:[],color:"gold"	}
-]
+
+
+let clickedCoord;
+let shipIndex=0; //start on carrier
+let currentShip;
 
 const grid={
  column:["A","B","C","D","E","F","G","H","I","J"],
@@ -13,22 +10,101 @@ const grid={
 }
 
 
-let unusedCoords=setGrid();
+function Player(idPrefix){
+	this.idPrefix=idPrefix;
+	this.unusedCoords=setGrid(idPrefix);
+	this.ships=[
+		{
+			name:"carrier",
+			size:5,
+			coordinates:[], 
+			color:"blue", 
+			setShip: function(){
+				console.log(this.name);
+				this.coordinates.push(clickedCoord);
+				console.log(this.coordinates);
+				console.log(`going into drawShip, this is:${this.name}`)
+				drawShip(this);
+			}		
+		},
+		{	name:"battleship",
+			size:4,
+			coordinates:[],
+			color:"grey",
+			setShip:function(){
+				console.log(this.name);
+				this.coordinates.push(clickedCoord);
+				console.log(this.coordinates);
+				drawShip(this);
+			}	
+		},
+		{	name:"submarine",
+			size:3,
+			coordinates:[],
+			color:"green", 
+			setShip:function(){
+				console.log(this.name);
+				this.coordinates.push(clickedCoord);
+				console.log(this.coordinates);
+				drawShip(this);
+			}	
+		},
+		{	name:"cruiser",
+			size:3,
+			coordinates:[],
+			color:"orange",
+			setShip:function(){
+				console.log(this.name);
+				this.coordinates.push(clickedCoord);
+				console.log(this.coordinates);
+				drawShip(this);
+			}	
+		},
+		{	name:"destroyer",
+			size:2,
+			coordinates:[],
+			color:"gold",
+			setShip:function(){
+				console.log(this.name);
+				this.coordinates.push(clickedCoord);
+				console.log(this.coordinates);
+				drawShip(this);
+			}	
+		}
+	];
+
+}
+
+const opponent= new Player("O");
+const player = new Player("P");
+// console.log(player.ships);
+// console.log(opponent.ships);
+// opponent.ships[0].coordinates.push("3A");
+// console.log(player.ships[0].coordinates);
+// console.log(opponent.ships[0].coordinates);
+
+console.log(`player id is ${player.idPrefix}`);
+
+
+//let unusedCoords=setGrid();
 // console.log(unusedCoords);
 
 //build grid of unused coordinates to pull from
-function setGrid(){
+function setGrid(idPrefix){
 	let arr = [];
 	grid.row.forEach(row=>{
 		for(let i=0; i<grid.column.length; i++){
-			arr.push(row+grid.column[i]);
+			arr.push(idPrefix+row+grid.column[i]);
 		}
 	});
 	return arr;
 }
 
+let opponentGrid=document.querySelectorAll(".row-content-container.opponent>div");
+let playerGrid=document.querySelectorAll(".row-content-container.player>div");
+
 //build ship around random coordinate
-ships.forEach(ship=>{
+opponent.ships.forEach(ship=>{
 	getStartCoord(ship);
 	
 });
@@ -75,7 +151,7 @@ function getStartCoord(ship){
 }
 
 
-//add the ship's length to the starting coord to make sure space exists, if not flip directions + check again, if all 4 directions fail, pick another coordinate
+//add the ship's length to the starting coord to make sure space exists, if not, pick another starting coord
 	function checkCoordinates(ship,build){
 
 		// console.log(`within function, startCoord[row]: ${startCoord[axisType]}`);
@@ -115,7 +191,7 @@ function mapCoordinates(build){
 			colCoord=grid[build.axisType][i];
 		}
 
-		let coord= rowCoord+colCoord;
+		let coord= "O"+rowCoord+colCoord;
 		// if(!(unusedCoords.includes(coord))){
 		// 	console.log("ship overlaps, no good");
 		// 	break;
@@ -126,13 +202,14 @@ function mapCoordinates(build){
 
 		
 		tempCoords.push(coord); //will check these for overlap
-		console.log(tempCoords);
+		console.log(`tempCoords are ${tempCoords}`);
 		// console.log(unusedCoords);
 		// console.log(`ship has coordinates:${build.ship.coordinates}`);
 	}
 
 	function noOverlap(coord){
-		return unusedCoords.includes(coord);
+		console.log(` no overlap coord is ${coord}`);
+		return opponent.unusedCoords.includes(coord);
 	}
 
 	console.log(tempCoords.every(noOverlap));
@@ -149,14 +226,26 @@ function mapCoordinates(build){
 function buildShip(ship,tempCoords){
 	tempCoords.forEach(coord=>{
 		ship.coordinates.push(coord);
-		unusedCoords.splice((unusedCoords.findIndex(el=>el===coord)),1);
+		opponent.unusedCoords.splice((opponent.unusedCoords.findIndex(el=>el===coord)),1);
 		drawShip(ship);
 	})
 }
 
 function drawShip(ship){ 
+	console.log(`in drawShip, ship is${ship.name}`);
+	console.log(`ship coordinates are ${ship.coordinates[0]}`);
+	let tile;
 	ship.coordinates.forEach(coordinate=>{
-		let tile=document.getElementById(coordinate);
+		// if(grid===playerGrid){
+		// console.log(`matched grid to player grid`);
+	
+		tile=document.getElementById(coordinate);
+		
+		// }else{
+		// 	console.log(`matched grid to opponent grid`);
+		// 	tile=document.getElementById(`O0A`);
+		// }
+		
 		tile.innerHTML="Y";
 		tile.style.backgroundColor=ship.color;
 		// console.log(tile);
@@ -164,7 +253,7 @@ function drawShip(ship){
 };
 
 //check if guess is a hit or miss
-let opponentGrid=document.querySelectorAll(".row-content-container>div");
+
 opponentGrid.forEach(tile=>{
 	tile.addEventListener("click", checkGuess);
 });
@@ -172,7 +261,7 @@ opponentGrid.forEach(tile=>{
 function checkGuess(e){
 	console.log(this);
 	let id =e.target.id;
-	if(unusedCoords.includes(id)){
+	if(opponent.unusedCoords.includes(id)){
 		console.log(`Miss on ${id}`);
 		this.style.backgroundColor="white";
 	}else{
@@ -183,7 +272,7 @@ function checkGuess(e){
 };
 //determine which ship was hit
 function hitShip(id){
-	ships.forEach(ship=>{
+	opponent.ships.forEach(ship=>{
 		if(ship.coordinates.includes(id)){
 			console.log(`${ship.name} was hit!`);
 			//remove tile from ship's coordinates
@@ -204,3 +293,40 @@ function hasSunk(ship){
 
 
 }
+
+//create player grid
+
+playerGrid.forEach(tile=>{
+tile.addEventListener("click", chooseCoord);
+});
+
+
+function chooseCoord(e){
+	clickedCoord=e.target.id;
+	console.log(`clickedCoord is ${clickedCoord}`);
+
+
+	currentShip=player.ships[shipIndex];
+	console.log(`current ship is${currentShip.name}`);
+		
+		//check if all the pieces of a ship have been placed
+		if(currentShip.coordinates.length<currentShip.size){
+			currentShip.setShip();
+		 	console.log(currentShip.coordinates);
+		}else{
+			shipIndex++;
+		}
+		
+		//stop setting pieces after all ships are placed
+		if(shipIndex===5){
+			playerGrid.forEach(tile=>{
+				tile.removeEventListener("click", chooseCoord);
+			});
+		}	
+};
+
+
+
+
+
+
