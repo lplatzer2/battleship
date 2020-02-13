@@ -136,7 +136,14 @@ let playerGrid=document.querySelectorAll(".row-content-container.player>div");
 let nextBtn=document.querySelector(".forward");
 let resetBtn=document.querySelector(".reset");
 
-nextBtn.addEventListener("click",()=>shipIndex++ );
+nextBtn.addEventListener("click",()=>{
+	//shipIndex++; 
+	playerGrid.forEach(tile=>{
+		tile.classList.remove("highlight");
+		tile.classList.remove("lowlight");
+	})
+
+});
 resetBtn.addEventListener("click", clearShip);
 
 
@@ -343,7 +350,7 @@ tile.addEventListener("click", chooseCoord);
 function chooseCoord(e){
 	clickedCoord=e.target.id;
 	console.log(`clickedCoord is ${clickedCoord}`);
-
+	getRow(clickedCoord);
 
 	currentShip=player.ships[shipIndex];
 	console.log(`current ship coords are ${currentShip.coordinates}`);
@@ -371,6 +378,7 @@ function chooseCoord(e){
 };
 
 
+//DOESN"T ACTUALLY ADD UNUSED COORDS BACK YET b/c they weren't ever used
 //erase ship from grid
 function clearShip(){
 	console.log(`ship coords before: ${currentShip.coordinates}`);
@@ -391,3 +399,28 @@ function clearShip(){
 	console.log(`unusedCoords after:${player.unusedCoords}`);
 };
 
+
+function getRow(clickedCoord){
+	// let playerArr=Array.from(playerGrid);
+	// let filterArr=playerArr.filter(function(coord){
+	// 	return playerArr[coord].id.includes(clickedCoord.charAt(1)|| clickedCoord.charAt(2));
+	// });
+
+	playerGrid.forEach(tile=>{
+		// console.log(tile.id);
+
+		let sameRow = tile.id.includes((clickedCoord.charAt(1)));
+		let sameCol= tile.id.includes((clickedCoord.charAt(2)));
+		//console.table(tile.id,a,b);
+		if(sameRow||sameCol){
+		tile.classList.add("highlight");
+			console.log(tile);
+		}else{
+			tile.classList.add("lowlight");
+
+			
+		}
+	})
+	
+//match row or column e.g. 4A match 4 || A
+};
