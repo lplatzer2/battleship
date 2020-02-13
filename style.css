@@ -67,3 +67,27 @@
 			justify-content: space-around;
 			flex-wrap: wrap;
 		}
+
+
+		.instructions{
+			background-color: gold;
+			height: 50px;
+		}
+
+		.forward{
+			background-color: lightgreen;
+		}
+
+		.reset{
+			background-color: red;
+		}
+
+
+		.highlight:hover{
+			background-color: #c3ef0282;
+		}
+		.lowlight{
+			background-color: #ff000082;
+		
+	
+		}
