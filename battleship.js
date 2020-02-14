@@ -3,6 +3,7 @@
 let clickedCoord;
 let shipIndex=0; //start on carrier
 let currentShip;
+let shipFinished=false;
 
 const grid={
  column:["A","B","C","D","E","F","G","H","I","J"],
@@ -14,6 +15,7 @@ function Player(idPrefix,ships){
 	this.idPrefix=idPrefix;
 	this.unusedCoords=setGrid(idPrefix);
 	this.ships=ships;
+	let parent =this;
 	// [
 	// 	{
 	// 		name:"carrier",
@@ -81,22 +83,27 @@ function Ship(name,size,color){
 	this.size=size;
 	this.coordinates=[];
 	this.color=color;
+	this.background=[];
+
 
 }
 
 Ship.prototype.setShip = function(){
-	console.log(this.name);
+	// console.log(this.name);
 	this.coordinates.push(clickedCoord);
-	console.log(this.coordinates);
+	// console.log(this.coordinates);
+	spliceCoords(player,clickedCoord);
 	drawShip(this);
 };
+
+
 
 
 const opponent= new Player("O",[
 	new Ship("carrier", 5, "blue"),
 	new Ship("battleship", 4, "grey"),
 	new Ship("submarine", 3, "green"),
-	new Ship("battleship", 3, "orange"),
+	new Ship("cruiser", 3, "orange"),
 	new Ship("destroyer", 2, "gold")
 	]);
 
@@ -104,7 +111,7 @@ const player = new Player("P",[
 	new Ship("carrier", 5, "blue"),
 	new Ship("battleship", 4, "grey"),
 	new Ship("submarine", 3, "green"),
-	new Ship("battleship", 3, "orange"),
+	new Ship("cruiser", 3, "orange"),
 	new Ship("destroyer", 2, "gold")
 	]);
 // console.log(player.ships);
@@ -142,7 +149,7 @@ nextBtn.addEventListener("click",()=>{
 		tile.classList.remove("highlight");
 		tile.classList.remove("lowlight");
 	})
-
+	shipFinished=true;
 });
 resetBtn.addEventListener("click", clearShip);
 
@@ -261,7 +268,7 @@ function mapCoordinates(build){
 	// console.log(tempCoords.every(noOverlap));
 	
 	if(tempCoords.every(noOverlap)){
-		buildShip(build.ship,tempCoords)
+		buildShip(build.ship,tempCoords,build.axisType)
 	}else{
 		//console.log("ship overlaps, no good");
 		getStartCoord(build.ship);
@@ -269,19 +276,35 @@ function mapCoordinates(build){
 	
 };
 
-function buildShip(ship,tempCoords){
-	tempCoords.forEach(coord=>{
+
+
+function buildShip(ship,tempCoords,axisType){
+	tempCoords.forEach((coord,index)=>{
 		ship.coordinates.push(coord);
-		opponent.unusedCoords.splice((opponent.unusedCoords.findIndex(el=>el===coord)),1);
+		//move to draw ship eventually
+	
+		ship.background.push(`${ship.name}/${ship.name}${index}${axisType}.png`);
+		//console.log(`ship's backgrnd ${ship.background}`);
+
+		//end move to draw ship
+		
+		// opponent.unusedCoords.splice((opponent.unusedCoords.findIndex(el=>el===coord)),1);
+		spliceCoords(opponent,coord);
 		drawShip(ship);
 	})
-}
+};
+
+function spliceCoords(person,coord){
+	// console.log(`unused before: ${person.unusedCoords}`);
+	person.unusedCoords.splice((person.unusedCoords.findIndex(el=>el===coord)),1);
+	// console.log(`unused after: ${person.unusedCoords}`);
+};
 
 function drawShip(ship){ 
-	console.log(`in drawShip, ship is${ship.name}`);
-	console.log(`ship coordinates are ${ship.coordinates[0]}`);
+	// console.log(`in drawShip, ship is${ship.name}`);
+	// console.log(`ship coordinates are ${ship.coordinates[0]}`);
 	let tile;
-	ship.coordinates.forEach(coordinate=>{
+	ship.coordinates.forEach((coordinate,index)=>{
 		// if(grid===playerGrid){
 		// console.log(`matched grid to player grid`);
 	
@@ -293,7 +316,10 @@ function drawShip(ship){
 		// }
 		
 		tile.innerHTML="Y";
-		tile.style.backgroundColor=ship.color;
+	
+		tile.style.background=`url(${ship.background[index]}) no-repeat center`;
+		tile.style.backgroundSize="contain";
+			tile.style.backgroundColor=ship.color;
 		// console.log(tile);
 	})
 };
@@ -349,7 +375,7 @@ tile.addEventListener("click", chooseCoord);
 
 function chooseCoord(e){
 	clickedCoord=e.target.id;
-	console.log(`clickedCoord is ${clickedCoord}`);
+	// console.log(`clickedCoord is ${clickedCoord}`);
 	getRow(clickedCoord);
 
 	currentShip=player.ships[shipIndex];
@@ -357,6 +383,7 @@ function chooseCoord(e){
 		
 		//check if all the pieces of a ship have been placed
 		if(currentShip.coordinates.length<currentShip.size){
+			shipFinished=false;
 			currentShip.setShip();
 		 	console.log(currentShip.coordinates);
 		 	nextBtn.disabled=true;
@@ -378,25 +405,33 @@ function chooseCoord(e){
 };
 
 
-//DOESN"T ACTUALLY ADD UNUSED COORDS BACK YET b/c they weren't ever used
+//DOESN"T WORK RIGHT YET
 //erase ship from grid
 function clearShip(){
 	console.log(`ship coords before: ${currentShip.coordinates}`);
 	console.log(`unusedCoords before:${player.unusedCoords}`);
-	currentShip=player.ships[shipIndex];
+	currentShip=player.ships[shipIndex-1] || player.ships[shipIndex];
+	console.log(`current ship: ${currentShip.name}`);
 	let tile;
-	for(let i=0; i<currentShip.coordinates.length; i++){
+	let length = currentShip.coordinates.length;
+	console.log(`length:${length}`);
+	for(let i=length-1; i>=0; i--){
+		console.log(`current ship coord:${currentShip.coordinates[i]}`);
 		//remove from drawing
-		tile = document.getElementById('currentShip.coordinate[i]');
-		tile.style.backgroundColor="initial";
+		tile = document.getElementById(`${currentShip.coordinates[i]}`);
+		tile.style.backgroundColor="transparent";
 		tile.innerHTML="";
 		//remove from grid
 		let popCoord =currentShip.coordinates.pop();
+		console.log(`popped coord: ${popCoord}`);
 		player.unusedCoords.push(popCoord);
 
 	};
 	console.log(`ship coords: ${currentShip.coordinates}`);
 	console.log(`unusedCoords after:${player.unusedCoords}`);
+	if(shipIndex!=0&&shipFinished){
+		shipIndex--;
+	};
 };
 
 
@@ -412,9 +447,11 @@ function getRow(clickedCoord){
 		let sameRow = tile.id.includes((clickedCoord.charAt(1)));
 		let sameCol= tile.id.includes((clickedCoord.charAt(2)));
 		//console.table(tile.id,a,b);
-		if(sameRow||sameCol){
+		if(sameRow||sameCol){ //ADD && exists in player.unusedCoords
 		tile.classList.add("highlight");
-			console.log(tile);
+			// console.log(tile);
+		
+		
 		}else{
 			tile.classList.add("lowlight");
 
@@ -422,5 +459,5 @@ function getRow(clickedCoord){
 		}
 	})
 	
-//match row or column e.g. 4A match 4 || A
+
 };
