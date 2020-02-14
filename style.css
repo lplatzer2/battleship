@@ -83,7 +83,7 @@
 		}
 
 
-		.highlight:hover{
+		.highlight,.highlight:hover{
 			background-color: #c3ef0282;
 		}
 		.lowlight{
