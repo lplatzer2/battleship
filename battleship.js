@@ -144,7 +144,12 @@ let nextBtn=document.querySelector(".forward");
 let resetBtn=document.querySelector(".reset");
 
 nextBtn.addEventListener("click",()=>{
-	//shipIndex++; 
+	if(shipIndex<4){
+		shipIndex++; 
+	}
+	if(shipIndex===4){
+		nextBtn.innerHTML="Finish";
+	}
 	playerGrid.forEach(tile=>{
 		tile.classList.remove("highlight");
 		tile.classList.remove("lowlight");
@@ -374,12 +379,13 @@ tile.addEventListener("click", chooseCoord);
 
 
 function chooseCoord(e){
+	console.log(`ship index is${shipIndex}`)
 	clickedCoord=e.target.id;
 	// console.log(`clickedCoord is ${clickedCoord}`);
 	getRow(clickedCoord);
 
 	currentShip=player.ships[shipIndex];
-	console.log(`current ship coords are ${currentShip.coordinates}`);
+	//console.log(`current ship coords are ${currentShip.coordinates}`);
 		
 		//check if all the pieces of a ship have been placed
 		if(currentShip.coordinates.length<currentShip.size){
@@ -391,13 +397,13 @@ function chooseCoord(e){
 		//separate if statement so it takes place in same click
 		if(currentShip.coordinates.length===currentShip.size){
 			console.log(`finished placing ${currentShip.name}`);
-			shipIndex++; 
+			//shipIndex++; 
 			nextBtn.disabled=false;
 		}
 		
 		//stop setting pieces after all ships are placed
-		if(shipIndex===5){
-			nextBtn.innerHTML="Finished";
+		if(shipIndex===4 && shipFinished){
+			
 			playerGrid.forEach(tile=>{
 				tile.removeEventListener("click", chooseCoord);
 			});
@@ -409,8 +415,8 @@ function chooseCoord(e){
 //erase ship from grid
 function clearShip(){
 	console.log(`ship coords before: ${currentShip.coordinates}`);
-	console.log(`unusedCoords before:${player.unusedCoords}`);
-	currentShip=player.ships[shipIndex-1] || player.ships[shipIndex];
+	//console.log(`unusedCoords before:${player.unusedCoords}`);
+	currentShip= player.ships[shipIndex];
 	console.log(`current ship: ${currentShip.name}`);
 	let tile;
 	let length = currentShip.coordinates.length;
@@ -423,15 +429,15 @@ function clearShip(){
 		tile.innerHTML="";
 		//remove from grid
 		let popCoord =currentShip.coordinates.pop();
-		console.log(`popped coord: ${popCoord}`);
+		//console.log(`popped coord: ${popCoord}`);
 		player.unusedCoords.push(popCoord);
 
 	};
 	console.log(`ship coords: ${currentShip.coordinates}`);
-	console.log(`unusedCoords after:${player.unusedCoords}`);
-	if(shipIndex!=0&&shipFinished){
-		shipIndex--;
-	};
+	//console.log(`unusedCoords after:${player.unusedCoords}`);
+	// if(shipIndex!=0&&shipFinished){
+	// 	shipIndex--;
+	// };
 };
 
 
