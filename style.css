@@ -82,12 +82,30 @@
 			background-color: red;
 		}
 
+		/*DOM TOGGLED CLASSES*/
 
-		.highlight,.highlight:hover{
+		.highlight{
 			background-color: #c3ef0282;
 		}
-		.lowlight{
+		.lowlight, .lowlight:hover{
 			background-color: #ff000082;
-		
-	
+			cursor:not-allowed;
+		}
+		.carrier{
+			background-color: blue;
+		}
+		.battleship{
+			background-color: grey;
+		}
+		.submarine{
+			background-color: green;
+		}
+		.cruiser{
+			background-color: orange;
+		}
+		.destroyer{
+			background-color: gold;
+		}
+		.transparent{
+			background-color: transparent;
 		}
