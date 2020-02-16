@@ -150,15 +150,34 @@ nextBtn.addEventListener("click",()=>{
 	if(shipIndex===4){
 		nextBtn.innerHTML="Finish";
 	}
-	playerGrid.forEach(tile=>{
-		tile.classList.remove("highlight");
-		tile.classList.remove("lowlight");
-	})
+	//reset highlights
+	// playerGrid.forEach(tile=>{
+	// 	 tile.classList.remove("highlight");
+	// 	 tile.classList.remove("lowlight");
+	// });
+	resetGuides();
 	shipFinished=true;
 });
 resetBtn.addEventListener("click", clearShip);
 
+function resetGuides(){
+	playerGrid.forEach(tile=>{
+		tile.addEventListener("click", chooseCoord);
+		//tile.innerHTML="";
+		
+		 tile.classList.remove("highlight");
+		 tile.classList.remove("lowlight");
+		// tile.classList.remove("transparent");
+	})
+}
 
+function resetClasses(tile){
+	
+		tile.className="";
+		tile.classList.add("grid");
+		tile.classList.add("row");
+	
+}
 
 
 //build ship around random coordinate
@@ -322,9 +341,12 @@ function drawShip(ship){
 		
 		tile.innerHTML="Y";
 	
-		tile.style.background=`url(${ship.background[index]}) no-repeat center`;
+		tile.style.backgroundImage=`url(${ship.background[index]})`;
+		tile.style.backgroundPosition="center";
+		tile.style.backgroundRepeat= "no-repeat";
 		tile.style.backgroundSize="contain";
-			tile.style.backgroundColor=ship.color;
+			//tile.style.backgroundColor=ship.color;
+			tile.classList.add(`${ship.name}`);
 		// console.log(tile);
 	})
 };
@@ -382,7 +404,10 @@ function chooseCoord(e){
 	console.log(`ship index is${shipIndex}`)
 	clickedCoord=e.target.id;
 	// console.log(`clickedCoord is ${clickedCoord}`);
-	getRow(clickedCoord);
+	if((!shipFinished)||(shipIndex<4)){
+		getRow(clickedCoord);
+	}
+	
 
 	currentShip=player.ships[shipIndex];
 	//console.log(`current ship coords are ${currentShip.coordinates}`);
@@ -402,8 +427,8 @@ function chooseCoord(e){
 		}
 		
 		//stop setting pieces after all ships are placed
-		if(shipIndex===4 && shipFinished){
-			
+		 if(shipIndex===4 && shipFinished){
+			nextBtn.disabled=true;
 			playerGrid.forEach(tile=>{
 				tile.removeEventListener("click", chooseCoord);
 			});
@@ -414,6 +439,8 @@ function chooseCoord(e){
 //DOESN"T WORK RIGHT YET
 //erase ship from grid
 function clearShip(){
+	//resetGuides();
+
 	console.log(`ship coords before: ${currentShip.coordinates}`);
 	//console.log(`unusedCoords before:${player.unusedCoords}`);
 	currentShip= player.ships[shipIndex];
@@ -424,9 +451,12 @@ function clearShip(){
 	for(let i=length-1; i>=0; i--){
 		console.log(`current ship coord:${currentShip.coordinates[i]}`);
 		//remove from drawing
-		tile = document.getElementById(`${currentShip.coordinates[i]}`);
-		tile.style.backgroundColor="transparent";
-		tile.innerHTML="";
+		
+		 tile = document.getElementById(`${currentShip.coordinates[i]}`);
+		// tile.classList.add("transparent");
+		 tile.innerHTML="";
+		 resetClasses(tile);
+		 resetGuides();
 		//remove from grid
 		let popCoord =currentShip.coordinates.pop();
 		//console.log(`popped coord: ${popCoord}`);
@@ -460,7 +490,7 @@ function getRow(clickedCoord){
 		
 		}else{
 			tile.classList.add("lowlight");
-
+			tile.removeEventListener("click", chooseCoord);
 			
 		}
 	})
