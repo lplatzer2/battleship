@@ -14,6 +14,7 @@ const grid={
 function Player(idPrefix,ships){
 	this.idPrefix=idPrefix;
 	this.unusedCoords=setGrid(idPrefix);
+	this.lockedCoords=[];
 	this.ships=ships;
 	let parent =this;
 	// [
@@ -91,6 +92,7 @@ function Ship(name,size,color){
 Ship.prototype.setShip = function(){
 	// console.log(this.name);
 	this.coordinates.push(clickedCoord);
+	//lock coordinates
 	// console.log(this.coordinates);
 	spliceCoords(player,clickedCoord);
 	drawShip(this);
@@ -155,20 +157,29 @@ nextBtn.addEventListener("click",()=>{
 	// 	 tile.classList.remove("highlight");
 	// 	 tile.classList.remove("lowlight");
 	// });
+
+	//lock placed coords before resetting guides
 	resetGuides();
 	shipFinished=true;
 });
 resetBtn.addEventListener("click", clearShip);
 
+
 function resetGuides(){
 	playerGrid.forEach(tile=>{
-		tile.addEventListener("click", chooseCoord);
+	
 		//tile.innerHTML="";
 		
 		 tile.classList.remove("highlight");
 		 tile.classList.remove("lowlight");
 		// tile.classList.remove("transparent");
+
+		//prevents overwriting a placed ship
+		if(player.unusedCoords.includes(tile.id)){
+			tile.addEventListener("click", chooseCoord);
+		}
 	})
+
 }
 
 function resetClasses(tile){
@@ -284,14 +295,11 @@ function mapCoordinates(build){
 		// console.log(`ship has coordinates:${build.ship.coordinates}`);
 	}
 
-	function noOverlap(coord){
-		// console.log(` no overlap coord is ${coord}`);
-		return opponent.unusedCoords.includes(coord);
-	}
+	
 
 	// console.log(tempCoords.every(noOverlap));
 	
-	if(tempCoords.every(noOverlap)){
+	if(tempCoords.every(coord=>noOverlap(coord,opponent))){
 		buildShip(build.ship,tempCoords,build.axisType)
 	}else{
 		//console.log("ship overlaps, no good");
@@ -300,7 +308,10 @@ function mapCoordinates(build){
 	
 };
 
-
+function noOverlap(coord, person){
+		// console.log(` no overlap coord is ${coord}`);
+		return person.unusedCoords.includes(coord);
+	}
 
 function buildShip(ship,tempCoords,axisType){
 	tempCoords.forEach((coord,index)=>{
@@ -405,7 +416,7 @@ function chooseCoord(e){
 	clickedCoord=e.target.id;
 	// console.log(`clickedCoord is ${clickedCoord}`);
 	if((!shipFinished)||(shipIndex<4)){
-		getRow(clickedCoord);
+		getRow(clickedCoord,e);
 	}
 	
 
@@ -436,7 +447,36 @@ function chooseCoord(e){
 };
 
 
-//DOESN"T WORK RIGHT YET
+function getRow(clickedCoord,e){
+	// let playerArr=Array.from(playerGrid);
+	// let filterArr=playerArr.filter(function(coord){
+	// 	return playerArr[coord].id.includes(clickedCoord.charAt(1)|| clickedCoord.charAt(2));
+	// });
+
+	e.target.removeEventListener("click",chooseCoord);
+
+	playerGrid.forEach(tile=>{
+		// console.log(tile.id);
+
+		let sameRow = tile.id.includes((clickedCoord.charAt(1)));
+		let sameCol= tile.id.includes((clickedCoord.charAt(2)));
+		//console.table(tile.id,a,b);
+		if(noOverlap(clickedCoord,player) && (tile!==e.target) 
+			&& (sameRow||sameCol)){ //ADD && exists in player.unusedCoords
+		tile.classList.add("highlight");
+		 console.log(tile);
+		
+		
+		}else{
+			tile.classList.add("lowlight");
+			tile.removeEventListener("click", chooseCoord);
+			
+		}
+	})
+	
+
+};
+
 //erase ship from grid
 function clearShip(){
 	//resetGuides();
@@ -450,50 +490,23 @@ function clearShip(){
 	console.log(`length:${length}`);
 	for(let i=length-1; i>=0; i--){
 		console.log(`current ship coord:${currentShip.coordinates[i]}`);
-		//remove from drawing
 		
+		//remove from drawing
 		 tile = document.getElementById(`${currentShip.coordinates[i]}`);
 		// tile.classList.add("transparent");
 		 tile.innerHTML="";
 		 resetClasses(tile);
-		 resetGuides();
+	
 		//remove from grid
 		let popCoord =currentShip.coordinates.pop();
 		//console.log(`popped coord: ${popCoord}`);
 		player.unusedCoords.push(popCoord);
 
 	};
+	resetGuides();
 	console.log(`ship coords: ${currentShip.coordinates}`);
 	//console.log(`unusedCoords after:${player.unusedCoords}`);
 	// if(shipIndex!=0&&shipFinished){
 	// 	shipIndex--;
 	// };
-};
-
-
-function getRow(clickedCoord){
-	// let playerArr=Array.from(playerGrid);
-	// let filterArr=playerArr.filter(function(coord){
-	// 	return playerArr[coord].id.includes(clickedCoord.charAt(1)|| clickedCoord.charAt(2));
-	// });
-
-	playerGrid.forEach(tile=>{
-		// console.log(tile.id);
-
-		let sameRow = tile.id.includes((clickedCoord.charAt(1)));
-		let sameCol= tile.id.includes((clickedCoord.charAt(2)));
-		//console.table(tile.id,a,b);
-		if(sameRow||sameCol){ //ADD && exists in player.unusedCoords
-		tile.classList.add("highlight");
-			// console.log(tile);
-		
-		
-		}else{
-			tile.classList.add("lowlight");
-			tile.removeEventListener("click", chooseCoord);
-			
-		}
-	})
-	
-
 };
