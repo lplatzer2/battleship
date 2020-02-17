@@ -415,12 +415,16 @@ function chooseCoord(e){
 	console.log(`ship index is${shipIndex}`)
 	clickedCoord=e.target.id;
 	// console.log(`clickedCoord is ${clickedCoord}`);
+	
+	currentShip=player.ships[shipIndex];
+
 	if((!shipFinished)||(shipIndex<4)){
-		getRow(clickedCoord,e);
+		getRow(clickedCoord,e,currentShip);
 	}
 	
 
-	currentShip=player.ships[shipIndex];
+
+
 	//console.log(`current ship coords are ${currentShip.coordinates}`);
 		
 		//check if all the pieces of a ship have been placed
@@ -447,22 +451,55 @@ function chooseCoord(e){
 };
 
 
-function getRow(clickedCoord,e){
+function getRow(clickedCoord,e,ship){
 	// let playerArr=Array.from(playerGrid);
 	// let filterArr=playerArr.filter(function(coord){
 	// 	return playerArr[coord].id.includes(clickedCoord.charAt(1)|| clickedCoord.charAt(2));
 	// });
 
+	//prevent placing 2 ship tiles on same coordinate
 	e.target.removeEventListener("click",chooseCoord);
-
+	
+	//determine acceptable range based on ship size
+	let row,column,sameRow,sameCol;
+	row=clickedCoord.charAt(1);
+	column=clickedCoord.charAt(2);
+	let indexRow=grid['row'].indexOf(parseInt(row));
+	let indexCol=grid['column'].indexOf(column);
+	let rowMaxRange=indexRow+ship.size-1;
+	let rowMinRange=indexRow-(ship.size-1);
+	let colMaxRange=indexCol+ship.size-1;
+	let colMinRange=indexCol-(ship.size-1);
+	console.log(`row is ${row}, and row index is ${indexRow}`);
+		console.log(`column is ${column}, and col index is ${indexCol}`);
+		console.log(`max distance from row index:${rowMaxRange}`);
+		console.log(`min distance from row index:${rowMinRange}`);
+		console.log(`max distance from col index:${colMaxRange}`);
+		console.log(`Min distance from col index:${colMinRange}`);
+	
 	playerGrid.forEach(tile=>{
 		// console.log(tile.id);
+		
+		sameRow = tile.id.includes(row);
+		sameCol= tile.id.includes(column);
 
-		let sameRow = tile.id.includes((clickedCoord.charAt(1)));
-		let sameCol= tile.id.includes((clickedCoord.charAt(2)));
+
+		
+		
+		let tileRowIndex=grid["row"].indexOf(parseInt(tile.id.charAt(1)));
+		let tileColIndex=grid["column"].indexOf(tile.id.charAt(2));
+		console.log(`tile:${tile.id} tileColIndex:${tileColIndex}`);
+		
+		//how to calculate distance between two grid points?
+		//console.log(`${tile.id}Passes rowMaxRange test${tileRowIndex<=rowMaxRange}`);
+		//console.log(`${tile.id}Passes rowMinRange test${tileRowIndex>=rowMinRange}`);
+		console.log(`${tile.id}Passes colMinRange test${tileColIndex>=colMinRange}`);
+		console.log(`${tile.id}Passes colMaxRange test${tileColIndex>=colMaxRange}`);
+
+
 		//console.table(tile.id,a,b);
 		if(noOverlap(clickedCoord,player) && (tile!==e.target) 
-			&& (sameRow||sameCol)){ //ADD && exists in player.unusedCoords
+			&& (sameRow||sameCol) && (tileRowIndex<=rowMaxRange) && (tileRowIndex>=rowMinRange) && (tileColIndex<=colMaxRange) && (tileColIndex>=colMinRange)){ //ADD within ship's length
 		tile.classList.add("highlight");
 		 console.log(tile);
 		
