@@ -1,9 +1,10 @@
-
+//COMMITTING FROM SETSHIP BRANCH
 
 let clickedCoord;
 let shipIndex=0; //start on carrier
 let currentShip;
 let shipFinished=false;
+let coordsLocked=false;
 
 const grid={
  column:["A","B","C","D","E","F","G","H","I","J"],
@@ -17,65 +18,7 @@ function Player(idPrefix,ships){
 	this.lockedCoords=[];
 	this.ships=ships;
 	let parent =this;
-	// [
-	// 	{
-	// 		name:"carrier",
-	// 		size:5,
-	// 		coordinates:[], 
-	// 		color:"blue", 
-	// 		// setShip: function(){
-	// 		// 	console.log(this.name);
-	// 		// 	this.coordinates.push(clickedCoord);
-	// 		// 	console.log(this.coordinates);
-	// 		// 	console.log(`going into drawShip, this is:${this.name}`)
-	// 		// 	drawShip(this);
-	// 		// }		
-	// 	},
-	// 	{	name:"battleship",
-	// 		size:4,
-	// 		coordinates:[],
-	// 		color:"grey",
-	// 		// setShip:function(){
-	// 		// 	console.log(this.name);
-	// 		// 	this.coordinates.push(clickedCoord);
-	// 		// 	console.log(this.coordinates);
-	// 		// 	drawShip(this);
-	// 		// }	
-	// 	},
-	// 	{	name:"submarine",
-	// 		size:3,
-	// 		coordinates:[],
-	// 		color:"green", 
-	// 		// setShip:function(){
-	// 		// 	console.log(this.name);
-	// 		// 	this.coordinates.push(clickedCoord);
-	// 		// 	console.log(this.coordinates);
-	// 		// 	drawShip(this);
-	// 		// }	
-	// 	},
-	// 	{	name:"cruiser",
-	// 		size:3,
-	// 		coordinates:[],
-	// 		color:"orange",
-	// 		// setShip:function(){
-	// 		// 	console.log(this.name);
-	// 		// 	this.coordinates.push(clickedCoord);
-	// 		// 	console.log(this.coordinates);
-	// 		// 	drawShip(this);
-	// 		// }	
-	// 	},
-	// 	{	name:"destroyer",
-	// 		size:2,
-	// 		coordinates:[],
-	// 		color:"gold",
-	// 		// setShip:function(){
-	// 		// 	console.log(this.name);
-	// 		// 	this.coordinates.push(clickedCoord);
-	// 		// 	console.log(this.coordinates);
-	// 		// 	drawShip(this);
-	// 		// }	
-	// 	}
-	// ];
+	
 
 }
 
@@ -146,8 +89,13 @@ let nextBtn=document.querySelector(".forward");
 let resetBtn=document.querySelector(".reset");
 
 nextBtn.addEventListener("click",()=>{
+	coordsLocked=true;
+	resetBtn.disabled=true;
+	nextBtn.disabled=true;
+	
 	if(shipIndex<4){
 		shipIndex++; 
+		console.log(`ship index now ${shipIndex}`);
 	}
 	if(shipIndex===4){
 		nextBtn.innerHTML="Finish";
@@ -161,6 +109,7 @@ nextBtn.addEventListener("click",()=>{
 	//lock placed coords before resetting guides
 	resetGuides();
 	shipFinished=true;
+	console.log(`shipFinished now ${shipFinished}`);
 });
 resetBtn.addEventListener("click", clearShip);
 
@@ -412,7 +361,11 @@ tile.addEventListener("click", chooseCoord);
 
 
 function chooseCoord(e){
-	console.log(`ship index is${shipIndex}`)
+	coordsLocked=false;
+	
+	resetBtn.disabled=false;
+	console.log(`next button disabled is ${nextBtn.disabled}`);
+	console.log(`ship index is ${shipIndex}`)
 	clickedCoord=e.target.id;
 	// console.log(`clickedCoord is ${clickedCoord}`);
 	
@@ -430,25 +383,33 @@ function chooseCoord(e){
 		//check if all the pieces of a ship have been placed
 		if(currentShip.coordinates.length<currentShip.size){
 			shipFinished=false;
+			console.log(`shipFinished now ${shipFinished}`);
 			currentShip.setShip();
 		 	console.log(currentShip.coordinates);
-		 	nextBtn.disabled=true;
+		 	// nextBtn.disabled=true;
+		 	
 		}
+
+
 		//separate if statement so it takes place in same click
 		if(currentShip.coordinates.length===currentShip.size){
 			console.log(`finished placing ${currentShip.name}`);
 			//shipIndex++; 
 			nextBtn.disabled=false;
+			shipFinished=true;
+			console.log(`next button disabled is ${nextBtn.disabled}`);
+			console.log(`shipFinished now ${shipFinished}`);
 		}
 		
 		//stop setting pieces after all ships are placed
 		 if(shipIndex===4 && shipFinished){
-			nextBtn.disabled=true;
 			playerGrid.forEach(tile=>{
 				tile.removeEventListener("click", chooseCoord);
 			});
 		}	
 };
+
+
 
 
 function getRow(clickedCoord,e,ship){
@@ -470,12 +431,12 @@ function getRow(clickedCoord,e,ship){
 	let rowMinRange=indexRow-(ship.size-1);
 	let colMaxRange=indexCol+ship.size-1;
 	let colMinRange=indexCol-(ship.size-1);
-	console.log(`row is ${row}, and row index is ${indexRow}`);
-		console.log(`column is ${column}, and col index is ${indexCol}`);
-		console.log(`max distance from row index:${rowMaxRange}`);
-		console.log(`min distance from row index:${rowMinRange}`);
-		console.log(`max distance from col index:${colMaxRange}`);
-		console.log(`Min distance from col index:${colMinRange}`);
+	// console.log(`row is ${row}, and row index is ${indexRow}`);
+	// 	console.log(`column is ${column}, and col index is ${indexCol}`);
+	// 	console.log(`max distance from row index:${rowMaxRange}`);
+	// 	console.log(`min distance from row index:${rowMinRange}`);
+	// 	console.log(`max distance from col index:${colMaxRange}`);
+	// 	console.log(`Min distance from col index:${colMinRange}`);
 	
 	playerGrid.forEach(tile=>{
 		// console.log(tile.id);
@@ -488,20 +449,20 @@ function getRow(clickedCoord,e,ship){
 		
 		let tileRowIndex=grid["row"].indexOf(parseInt(tile.id.charAt(1)));
 		let tileColIndex=grid["column"].indexOf(tile.id.charAt(2));
-		console.log(`tile:${tile.id} tileColIndex:${tileColIndex}`);
+		//console.log(`tile:${tile.id} tileColIndex:${tileColIndex}`);
 		
 		//how to calculate distance between two grid points?
 		//console.log(`${tile.id}Passes rowMaxRange test${tileRowIndex<=rowMaxRange}`);
 		//console.log(`${tile.id}Passes rowMinRange test${tileRowIndex>=rowMinRange}`);
-		console.log(`${tile.id}Passes colMinRange test${tileColIndex>=colMinRange}`);
-		console.log(`${tile.id}Passes colMaxRange test${tileColIndex>=colMaxRange}`);
+		// console.log(`${tile.id}Passes colMinRange test${tileColIndex>=colMinRange}`);
+		// console.log(`${tile.id}Passes colMaxRange test${tileColIndex>=colMaxRange}`);
 
 
 		//console.table(tile.id,a,b);
 		if(noOverlap(clickedCoord,player) && (tile!==e.target) 
 			&& (sameRow||sameCol) && (tileRowIndex<=rowMaxRange) && (tileRowIndex>=rowMinRange) && (tileColIndex<=colMaxRange) && (tileColIndex>=colMinRange)){ //ADD within ship's length
 		tile.classList.add("highlight");
-		 console.log(tile);
+		// console.log(tile);
 		
 		
 		}else{
@@ -517,7 +478,7 @@ function getRow(clickedCoord,e,ship){
 //erase ship from grid
 function clearShip(){
 	//resetGuides();
-
+	nextBtn.disabled=true;
 	console.log(`ship coords before: ${currentShip.coordinates}`);
 	//console.log(`unusedCoords before:${player.unusedCoords}`);
 	currentShip= player.ships[shipIndex];
