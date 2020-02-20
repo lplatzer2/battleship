@@ -5,6 +5,7 @@ let shipIndex=0; //start on carrier
 let currentShip;
 let shipFinished=false;
 let coordsLocked=false;
+// let allFinished=false;
 
 const grid={
  column:["A","B","C","D","E","F","G","H","I","J"],
@@ -93,7 +94,7 @@ nextBtn.addEventListener("click",()=>{
 	resetBtn.disabled=true;
 	nextBtn.disabled=true;
 	
-	if(shipIndex<4){
+	if(shipIndex<5){
 		shipIndex++; 
 		console.log(`ship index now ${shipIndex}`);
 	}
@@ -106,10 +107,19 @@ nextBtn.addEventListener("click",()=>{
 	// 	 tile.classList.remove("lowlight");
 	// });
 
+	
+
 	//lock placed coords before resetting guides
 	resetGuides();
 	shipFinished=true;
 	console.log(`shipFinished now ${shipFinished}`);
+
+	 if(shipIndex===5){
+		playerGrid.forEach(tile=>{
+			tile.removeEventListener("click", chooseCoord);
+ 		});
+	 }	
+	
 });
 resetBtn.addEventListener("click", clearShip);
 
@@ -371,7 +381,7 @@ function chooseCoord(e){
 	
 	currentShip=player.ships[shipIndex];
 
-	if((!shipFinished)||(shipIndex<4)){
+	if((!coordsLocked)||(shipIndex<4)){
 		getRow(clickedCoord,e,currentShip);
 	}
 	
@@ -402,11 +412,12 @@ function chooseCoord(e){
 		}
 		
 		//stop setting pieces after all ships are placed
-		 if(shipIndex===4 && shipFinished){
-			playerGrid.forEach(tile=>{
-				tile.removeEventListener("click", chooseCoord);
-			});
-		}	
+		  // if(shipIndex===4 && coordsLocked){
+		
+		// 	playerGrid.forEach(tile=>{
+		// 		tile.removeEventListener("click", chooseCoord);
+		// 	});
+		// }	
 };
 
 
