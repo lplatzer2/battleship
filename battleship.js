@@ -4,6 +4,7 @@ let clickedCoord;
 let shipIndex=0; //start on carrier
 let currentShip;
 let coordsLocked=false;
+let playerTurn=true;
 
 
 const grid={
@@ -105,6 +106,8 @@ nextBtn.addEventListener("click",()=>{
 		playerGrid.forEach(tile=>{
 			tile.removeEventListener("click", chooseCoord);
  		});
+ 		playerTurn=false;
+ 		opponentTurn();
 	 }	
 	
 });
@@ -207,8 +210,23 @@ function getStartCoord(ship){
 
 		}else{
 			console.log(`${ship.name} should fit here`);
-			mapCoordinates(build);	
+			let tempCoords =mapCoordinates(build);	
+
+				// check for overlap before building
+			if(tempCoords.every(coord=>noOverlap(coord,opponent))){
+				buildShip(build.ship,tempCoords,build.axisType)
+			}else{
+				//console.log("ship overlaps, no good");
+				getStartCoord(build.ship);
+			}
+
+
+
 		}
+
+
+		
+
 	}
 
 
@@ -240,18 +258,19 @@ function mapCoordinates(build){
 		// console.log(`tempCoords are ${tempCoords}`);
 		// console.log(unusedCoords);
 		// console.log(`ship has coordinates:${build.ship.coordinates}`);
+		
 	}
 
-	
-
+	return tempCoords;
+	//HOW MAPCOORDS LOOKED WITHOUT RETURNING. this was moved to checkCoords
 	// console.log(tempCoords.every(noOverlap));
 	
-	if(tempCoords.every(coord=>noOverlap(coord,opponent))){
-		buildShip(build.ship,tempCoords,build.axisType)
-	}else{
-		//console.log("ship overlaps, no good");
-		getStartCoord(build.ship);
-	}
+	// if(tempCoords.every(coord=>noOverlap(coord,opponent))){
+	// 	buildShip(build.ship,tempCoords,build.axisType)
+	// }else{
+	// 	//console.log("ship overlaps, no good");
+	// 	getStartCoord(build.ship);
+	// }
 	
 };
 
@@ -312,10 +331,10 @@ function drawShip(ship){
 //check if guess is a hit or miss
 
 opponentGrid.forEach(tile=>{
-	tile.addEventListener("click", checkGuess);
+	tile.addEventListener("click", checkPlayerGuess);
 });
 
-function checkGuess(e){
+function checkPlayerGuess(e){
 	console.log(this);
 	let id =e.target.id;
 	if(opponent.unusedCoords.includes(id)){
@@ -324,12 +343,28 @@ function checkGuess(e){
 	}else{
 		console.log(`Hit on ${id}`);
 		this.style.backgroundColor="red";
-		hitShip(id);
+		hitShip(id,opponent);
 	}
 };
+
+
+function checkOppGuess(guess){
+let id = document.getElementById(guess);
+console.log(id.id);
+if(player.unusedCoords.includes(id.id)){
+		console.log(`Miss on ${id.id}`);
+		id.style.backgroundColor="white";
+	}else{
+		console.log(`Hit on ${id.id}`);
+		id.style.backgroundColor="red";
+		hitShip(id.id,player);
+	}
+}
+
+
 //determine which ship was hit
-function hitShip(id){
-	opponent.ships.forEach(ship=>{
+function hitShip(id,person){
+	person.ships.forEach(ship=>{
 		if(ship.coordinates.includes(id)){
 			console.log(`${ship.name} was hit!`);
 			//remove tile from ship's coordinates
@@ -500,3 +535,60 @@ function clearShip(){
 	//console.log(`unusedCoords after:${player.unusedCoords}`);
 	
 };
+
+
+function makeGuess(){
+	//computer guesses random coordinate that it hasn't guessed before
+		// let guess = getRandCoord();
+	let guess = getRandCoord();
+	let coord ="P"+guess.row+guess.column;
+	console.log(coord);
+	//console.log(guesses.includes(coord));
+	
+
+	while(guesses.includes(coord)){
+		//console.log(`already guessed ${coord}`);
+	guess=getRandCoord();
+	coord="P"+guess.row+guess.column;
+	}
+	guesses.push(coord);
+
+	//console.log(guesses);
+	return coord;
+	//check guess()
+	//if(checkHit){ 
+		//mark red on ship + update ship coordinate length
+
+		//if (checkSunk){
+			// run function determining the smallest ship stilll standing, use its length as the max range for next guess distance from the random hit coord,
+			//e.g when destroyer sinks:
+			//update next get random to within 2 spaces
+
+			//e.g. when sub and cruiser sink:
+			//update next get random to within 3 spaces
+			//when battleship sinks:
+			//update next get random to within 4 spaces
+		//}else{
+			//get next random coord from within 1 spaces of hit
+		//}
+	
+		
+		
+
+	// if miss, mark white space on player grid
+
+
+	//run function determining largest ship still standing, use its length as max empty space in grid to guess from
+			//e.g. if battleship is largest, only guess in places where there are 4 empty spots
+}
+let guesses = [];
+function opponentTurn(){
+	for(i=0; i< 30; i++){
+		let guess =makeGuess();
+		checkOppGuess(guess);
+	}
+
+}
+
+
+//need a function just for mapping js coordinate to grid
