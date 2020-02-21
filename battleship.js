@@ -1,11 +1,10 @@
-//COMMITTING FROM SETSHIP BRANCH
+
 
 let clickedCoord;
 let shipIndex=0; //start on carrier
 let currentShip;
-let shipFinished=false;
 let coordsLocked=false;
-// let allFinished=false;
+
 
 const grid={
  column:["A","B","C","D","E","F","G","H","I","J"],
@@ -13,11 +12,17 @@ const grid={
 }
 
 
-function Player(idPrefix,ships){
+function Player(idPrefix){
 	this.idPrefix=idPrefix;
 	this.unusedCoords=setGrid(idPrefix);
 	this.lockedCoords=[];
-	this.ships=ships;
+	this.ships=[	
+		new Ship("carrier", 5, "blue"),
+		new Ship("battleship", 4, "grey"),
+		new Ship("submarine", 3, "green"),
+		new Ship("cruiser", 3, "orange"),
+		new Ship("destroyer", 2, "gold")
+	];
 	let parent =this;
 	
 
@@ -36,7 +41,6 @@ function Ship(name,size,color){
 Ship.prototype.setShip = function(){
 	// console.log(this.name);
 	this.coordinates.push(clickedCoord);
-	//lock coordinates
 	// console.log(this.coordinates);
 	spliceCoords(player,clickedCoord);
 	drawShip(this);
@@ -45,21 +49,9 @@ Ship.prototype.setShip = function(){
 
 
 
-const opponent= new Player("O",[
-	new Ship("carrier", 5, "blue"),
-	new Ship("battleship", 4, "grey"),
-	new Ship("submarine", 3, "green"),
-	new Ship("cruiser", 3, "orange"),
-	new Ship("destroyer", 2, "gold")
-	]);
+const opponent= new Player("O");
 
-const player = new Player("P",[
-	new Ship("carrier", 5, "blue"),
-	new Ship("battleship", 4, "grey"),
-	new Ship("submarine", 3, "green"),
-	new Ship("cruiser", 3, "orange"),
-	new Ship("destroyer", 2, "gold")
-	]);
+const player = new Player("P");
 // console.log(player.ships);
 // console.log(opponent.ships);
 // opponent.ships[0].coordinates.push("3A");
@@ -83,13 +75,17 @@ function setGrid(idPrefix){
 	return arr;
 }
 
+//DOM selectors
 let opponentGrid=document.querySelectorAll(".row-content-container.opponent>div");
 let playerGrid=document.querySelectorAll(".row-content-container.player>div");
 
 let nextBtn=document.querySelector(".forward");
 let resetBtn=document.querySelector(".reset");
 
+
+//lock in coordinates and move to next ship
 nextBtn.addEventListener("click",()=>{
+	//lock placed coords before resetting guides
 	coordsLocked=true;
 	resetBtn.disabled=true;
 	nextBtn.disabled=true;
@@ -101,19 +97,10 @@ nextBtn.addEventListener("click",()=>{
 	if(shipIndex===4){
 		nextBtn.innerHTML="Finish";
 	}
-	//reset highlights
-	// playerGrid.forEach(tile=>{
-	// 	 tile.classList.remove("highlight");
-	// 	 tile.classList.remove("lowlight");
-	// });
 
-	
-
-	//lock placed coords before resetting guides
 	resetGuides();
-	shipFinished=true;
-	console.log(`shipFinished now ${shipFinished}`);
-
+	
+	//stop setting pieces after all ships are placed
 	 if(shipIndex===5){
 		playerGrid.forEach(tile=>{
 			tile.removeEventListener("click", chooseCoord);
@@ -121,6 +108,7 @@ nextBtn.addEventListener("click",()=>{
 	 }	
 	
 });
+
 resetBtn.addEventListener("click", clearShip);
 
 
@@ -392,8 +380,8 @@ function chooseCoord(e){
 		
 		//check if all the pieces of a ship have been placed
 		if(currentShip.coordinates.length<currentShip.size){
-			shipFinished=false;
-			console.log(`shipFinished now ${shipFinished}`);
+			
+
 			currentShip.setShip();
 		 	console.log(currentShip.coordinates);
 		 	// nextBtn.disabled=true;
@@ -406,18 +394,13 @@ function chooseCoord(e){
 			console.log(`finished placing ${currentShip.name}`);
 			//shipIndex++; 
 			nextBtn.disabled=false;
-			shipFinished=true;
+	
 			console.log(`next button disabled is ${nextBtn.disabled}`);
-			console.log(`shipFinished now ${shipFinished}`);
+		
 		}
 		
-		//stop setting pieces after all ships are placed
-		  // if(shipIndex===4 && coordsLocked){
 		
-		// 	playerGrid.forEach(tile=>{
-		// 		tile.removeEventListener("click", chooseCoord);
-		// 	});
-		// }	
+			
 };
 
 
@@ -515,7 +498,5 @@ function clearShip(){
 	resetGuides();
 	console.log(`ship coords: ${currentShip.coordinates}`);
 	//console.log(`unusedCoords after:${player.unusedCoords}`);
-	// if(shipIndex!=0&&shipFinished){
-	// 	shipIndex--;
-	// };
+	
 };
