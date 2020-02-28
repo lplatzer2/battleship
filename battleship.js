@@ -5,7 +5,9 @@ let shipIndex=0; //start on carrier
 let currentShip;
 let coordsLocked=false;
 let playerTurn=true;
-let lastHit=false;
+// let lastHit=false;
+// let shipSunk=false;
+let keepGoing=false;
 
 
 const grid={
@@ -362,11 +364,14 @@ let id = document.getElementById(guess);
 console.log(id.id);
 	if(player.unusedCoords.includes(id.id)){
 		console.log(`Miss on ${id.id}`);
-		lastHit=false;
+		// lastHit=false;
 		id.style.backgroundColor="white";
 	}else{
 		console.log(`Hit on ${id.id}`);
-		lastHit=true;
+		keepGoing=true;
+		console.log("initializing nextguess");
+		nextguess=getNextGuess(id.id);
+		//lastHit=true;
 		id.style.backgroundColor="red";
 		hitShip(id.id,player);
 		
@@ -399,10 +404,15 @@ function hasSunk(ship,person){
 		person.ships.splice(person.ships.findIndex(el=>el.name===ship.name),1);
 		person.ships.forEach(ship=>console.log(`ships include ${ship.name}`));
 			// console.log(`ships are now ${person.ships}`);
-		lastHit=false;
+		// lastHit=false;
+		// shipSunk=true;
+		keepGoing=false;
+		nextguess=[];
 		document.getElementById(ship.name).style.textDecoration="line-through";
 	}
-
+	// }else{
+	// 	// shipSunk=false;	
+	// }
 
 }
 
@@ -586,66 +596,84 @@ function clearShip(){
 	
 };
 
-
-function makeGuess(lastGuess){
+function getNextGuess(lastGuess){
 	
-	let guess = getRandCoord();
-	let coord ="P"+guess.row+guess.column;
-	console.log(coord);
-	let space = smallestShip();
+	let space = largestShip();
 
-	if(lastHit){
-		
-		let range =getMaxRange(lastGuess,space);
+	let range =getMaxRange(lastGuess,space);
 		[row,column]=range;
 		console.log(range);
-		let  nextguess =[];
-		playerGrid.forEach(tile=>{
-			let index = getIndex(tile.id);
+		
+	playerGrid.forEach(tile=>{
+		let index = getIndex(tile.id);
 
 
-			if((!guesses.includes(tile.id)) && (tile.id!==lastGuess) && (sameRowOrCol(tile.id,row,column)) && (inRange(index,range))){
-				nextguess.push(tile);
-			// 	console.log(`last was ${lastGuess}, ${coord} passes the tests`); 
-			// }
-			}
-		});
+		if((!guesses.includes(tile.id)) && (tile.id!==lastGuess) && (sameRowOrCol(tile.id,row,column)) && (inRange(index,range))){
+			nextguess.push(tile);
+		// 	console.log(`last was ${lastGuess}, ${coord} passes the tests`); 
+		// }
+		}
+	});
+
+	return nextguess;
+
+}
+
+function makeGuess(lastGuess){
+	let coord;
+	
+	// let space = largestShip();
+
+	if(keepGoing){ //guess based on last hit coordinate
+		
+		// let range =getMaxRange(lastGuess,space);
+		// [row,column]=range;
+		// console.log(range);
+		
+		// playerGrid.forEach(tile=>{
+		// 	let index = getIndex(tile.id);
+
+
+		// 	if((!guesses.includes(tile.id)) && (tile.id!==lastGuess) && (sameRowOrCol(tile.id,row,column)) && (inRange(index,range))){
+		// 		nextguess.push(tile);
+		// 	// 	console.log(`last was ${lastGuess}, ${coord} passes the tests`); 
+		// 	// }
+		// 	}
+		// });
+
 		console.log(nextguess);
 		console.log(nextguess.length);
 		coord=nextguess[0].id;
-		spliceCoords(nextguess,coord);
+		nextguess.shift();
 		console.log("after splicing, nextguess is");
 		console.log(nextguess);
-			console.log(nextguess.length);
+		console.log(nextguess.length);
 		//coord ="P"+guess.row+guess.column;
 	
-	}
-		
-		
-		// [tileRowIndex,tileColIndex]=index;
+	}else{ //guess at random
+		let guess = getRandCoord();
+		coord ="P"+guess.row+guess.column;
+		console.log(coord);
 
-
-
-
-		// let guess = getRandCoord();
-	
-	//console.log(guesses.includes(coord));
-
-	
-	
-	//make sure coord hasn't been guessed before
-	while(guesses.includes(coord)){
+		//make sure coord hasn't been guessed before
+		while(guesses.includes(coord)){
 		//console.log(`already guessed ${coord}`);
-	guess=getRandCoord();
-	coord="P"+guess.row+guess.column;
+			guess=getRandCoord();
+			coord="P"+guess.row+guess.column;
+		}
+
 	}
+		
 	guesses.push(coord);
 
 	//console.log(guesses);
 	return coord;
 	
 }
+
 let guesses = [];
+let  nextguess =[];
+
 function opponentTurn(){
 	let lastGuess;
 	for(i=0; i< 30; i++){
@@ -692,6 +720,16 @@ function smallestShip(){
 	return smallest;
 }
 
+function largestShip(){
+	let largest=2;
+	player.ships.forEach(ship=>{
+		if(ship.size>largest){
+			largest=ship.size;
+		}
+	})
+	console.log(`largest ship standing is ${largest}`);
+	return largest;
+}
 
 //check guess()
 	//if(checkHit){ 
@@ -718,3 +756,12 @@ function smallestShip(){
 
 	//run function determining largest ship still standing, use its length as max empty space in grid to guess from
 			//e.g. if battleship is largest, only guess in places where there are 4 empty spots
+
+
+
+			//if you have a hit, initialize array of possible guesses based on that hit. keep using that array regardless of hits or misses until the ship sinks. when the ship sinks, reset possible guess array  to [];
+
+			//a hit triggers intitalize array and turns keepgoing ON
+			//initialize array
+			//sinking a ship turns keepgoing OFF and triggers reset
+			//reset
