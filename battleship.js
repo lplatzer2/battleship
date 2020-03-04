@@ -1,12 +1,8 @@
-
-
 let clickedCoord;
 let shipIndex=0; //start on carrier
 let currentShip;
 let coordsLocked=false;
 let playerTurn=true;
-// let lastHit=false;
-// let shipSunk=false;
 let keepGoing=false;
 
 
@@ -26,10 +22,7 @@ function Player(idPrefix){
 		new Ship("submarine", 3, "green"),
 		new Ship("cruiser", 3, "orange"),
 		new Ship("destroyer", 2, "gold")
-	];
-	let parent =this;
-	
-
+	];	
 }
 
 function Ship(name,size,color){
@@ -38,8 +31,6 @@ function Ship(name,size,color){
 	this.coordinates=[];
 	this.color=color;
 	this.background=[];
-
-
 }
 
 Ship.prototype.setShip = function(){
@@ -52,10 +43,9 @@ Ship.prototype.setShip = function(){
 
 
 
-
 const opponent= new Player("O");
-
 const player = new Player("P");
+
 // console.log(player.ships);
 // console.log(opponent.ships);
 // opponent.ships[0].coordinates.push("3A");
@@ -121,9 +111,12 @@ nextBtn.addEventListener("click",()=>{
 	
 });
 
+
+//************************************RESETS*****************************************//
+//undo ship placement
 resetBtn.addEventListener("click", clearShip);
 
-
+//remove from grid highlights indicating correct ship placement
 function resetGuides(){
 	playerGrid.forEach(tile=>{
 	
@@ -141,6 +134,7 @@ function resetGuides(){
 
 }
 
+//remove all formatting classes from grid
 function resetClasses(tile){
 	
 		tile.className="";
@@ -149,7 +143,45 @@ function resetClasses(tile){
 	
 }
 
+//erase ship from grid
+function clearShip(){
+	//resetGuides();
+	nextBtn.disabled=true;
+	console.log(`ship coords before: ${currentShip.coordinates}`);
+	//console.log(`unusedCoords before:${player.unusedCoords}`);
+	currentShip= player.ships[shipIndex];
+	console.log(`current ship: ${currentShip.name}`);
+	let tile;
+	let length = currentShip.coordinates.length;
+	console.log(`length:${length}`);
+	for(let i=length-1; i>=0; i--){
+		console.log(`current ship coord:${currentShip.coordinates[i]}`);
+		
+		//remove from drawing
+		 tile = document.getElementById(`${currentShip.coordinates[i]}`);
+		// tile.classList.add("transparent");
+		 tile.innerHTML="";
+		 resetClasses(tile);
+	
+		//remove from grid
+		let popCoord =currentShip.coordinates.pop();
+		//console.log(`popped coord: ${popCoord}`);
+		player.unusedCoords.push(popCoord);
 
+	};
+	resetGuides();
+	console.log(`ship coords: ${currentShip.coordinates}`);
+	//console.log(`unusedCoords after:${player.unusedCoords}`);
+	
+};
+
+//***********************************************************************************//
+
+
+
+
+
+//********************************BUILDS*********************************************//
 //build ship around random coordinate
 opponent.ships.forEach(ship=>{
 	getStartCoord(ship);
@@ -199,46 +231,39 @@ function getStartCoord(ship){
 
 
 //add the ship's length to the starting coord to make sure space exists, if not, pick another starting coord
-	function checkCoordinates(ship,build){
+function checkCoordinates(ship,build){
 
-		// console.log(`within function, startCoord[row]: ${startCoord[axisType]}`);
+	// console.log(`within function, startCoord[row]: ${startCoord[axisType]}`);
 
-		// console.log(`start at index ${grid[axisType].indexOf(startCoord[axisType])}`);
+	// console.log(`start at index ${grid[axisType].indexOf(startCoord[axisType])}`);
 
-		let index = grid[build.axisType].indexOf(build.startCoord[build.axisType]);
-		// console.log(`index is ${index}`);
-		// console.log(`index+ ship size is ${index+ship.size-1}`);
+	let index = grid[build.axisType].indexOf(build.startCoord[build.axisType]);
+	// console.log(`index is ${index}`);
+	// console.log(`index+ ship size is ${index+ship.size-1}`);
 
-		//using build for all variables that would normally be global
-		build.index=index;
-		build.ship=ship;
+	//using build for all variables that would normally be global
+	build.index=index;
+	build.ship=ship;
 
-		if(!grid[build.axisType][index+ship.size-1]){
-			console.log(`${ship.name} won't fit here`);
-			getStartCoord(build.ship);
+	if(!grid[build.axisType][index+ship.size-1]){
+		//console.log(`${ship.name} won't fit here`);
+		getStartCoord(build.ship);
 
+	}else{
+		//console.log(`${ship.name} should fit here`);
+		let tempCoords =mapCoordinates(build);	
+
+			// check for overlap before building
+		if(tempCoords.every(coord=>noOverlap(coord,opponent))){
+			buildShip(build.ship,tempCoords,build.axisType)
 		}else{
-			console.log(`${ship.name} should fit here`);
-			let tempCoords =mapCoordinates(build);	
-
-				// check for overlap before building
-			if(tempCoords.every(coord=>noOverlap(coord,opponent))){
-				buildShip(build.ship,tempCoords,build.axisType)
-			}else{
-				//console.log("ship overlaps, no good");
-				getStartCoord(build.ship);
-			}
-
-
-
+			//console.log("ship overlaps, no good");
+			getStartCoord(build.ship);
 		}
-
-
-		
 
 	}
 
-
+}
 
 function mapCoordinates(build){
 	let tempCoords =[];
@@ -283,10 +308,7 @@ function mapCoordinates(build){
 	
 };
 
-function noOverlap(coord, person){
-		// console.log(` no overlap coord is ${coord}`);
-		return person.unusedCoords.includes(coord);
-	}
+
 
 function buildShip(ship,tempCoords,axisType){
 	tempCoords.forEach((coord,index)=>{
@@ -338,83 +360,9 @@ function drawShip(ship){
 	})
 };
 
-//check if guess is a hit or miss
-
-opponentGrid.forEach(tile=>{
-	tile.addEventListener("click", checkPlayerGuess);
-});
-
-function checkPlayerGuess(e){
-	console.log(this);
-	let id =e.target.id;
-	if(opponent.unusedCoords.includes(id)){
-		console.log(`Miss on ${id}`);
-		this.style.backgroundColor="white";
-	}else{
-		console.log(`Hit on ${id}`);
-		this.style.backgroundColor="red";
-		hitShip(id,opponent);
-	}
-};
 
 
-function checkOppGuess(guess){
-let id = document.getElementById(guess);
-
-console.log(id.id);
-	if(player.unusedCoords.includes(id.id)){
-		console.log(`Miss on ${id.id}`);
-		// lastHit=false;
-		id.style.backgroundColor="white";
-	}else{
-		console.log(`Hit on ${id.id}`);
-		keepGoing=true;
-		console.log("initializing nextguess");
-		nextguess=getNextGuess(id.id);
-		//lastHit=true;
-		id.style.backgroundColor="red";
-		hitShip(id.id,player);
-		
-	}
-	return id.id ;
-}
-
-
-//determine which ship was hit
-function hitShip(id,person){
-
-	person.ships.forEach(ship=>{
-		if(ship.coordinates.includes(id)){
-			console.log(`${ship.name} was hit!`);
-			//remove tile from ship's coordinates
-			ship.coordinates.splice((ship.coordinates.findIndex(el=>el===id)),1);
-			console.log(`ship's coordinates length now${ship.coordinates.length}`);
-			//check if sunk
-			hasSunk(ship,person);
-		
-		}
-	})
-	
-}
-//check if ship has sunk
-function hasSunk(ship,person){
-	if(ship.coordinates.length===0){
-		console.log(`${ship.name} has sunk!`);
-		console.log(person.ships.findIndex(el=>el.name===ship.name,1))
-		person.ships.splice(person.ships.findIndex(el=>el.name===ship.name),1);
-		person.ships.forEach(ship=>console.log(`ships include ${ship.name}`));
-			// console.log(`ships are now ${person.ships}`);
-		// lastHit=false;
-		// shipSunk=true;
-		keepGoing=false;
-		nextguess=[];
-		document.getElementById(ship.name).style.textDecoration="line-through";
-	}
-	// }else{
-	// 	// shipSunk=false;	
-	// }
-
-}
+//***************************PLAYER BUILDS*********************************************//
 
 //create player grid
 
@@ -422,7 +370,7 @@ playerGrid.forEach(tile=>{
 tile.addEventListener("click", chooseCoord);
 });
 
-
+//add selected tile to ship coordinate
 function chooseCoord(e){
 	coordsLocked=false;
 	
@@ -438,9 +386,6 @@ function chooseCoord(e){
 		getRow(clickedCoord,e,currentShip);
 	}
 	
-
-
-
 	//console.log(`current ship coords are ${currentShip.coordinates}`);
 		
 		//check if all the pieces of a ship have been placed
@@ -463,7 +408,7 @@ function chooseCoord(e){
 
 
 
-
+//highlight rows and columns where ship placement is available
 function getRow(clickedCoord,e,ship){
 
 
@@ -484,11 +429,11 @@ function getRow(clickedCoord,e,ship){
 	
 	// [row,column,rowMaxRange,rowMinRange,colMaxRange,colMinRange]=getMaxRange(clickedCoord,ship.size);
 	let range=getMaxRange(clickedCoord,ship.size);
-	// console.log(range);
+	 console.log(range);
 	
 	[row,column]=range;
-	 //console.log(`row is ${row}, and row index is ${indexRow}`);
-	 //	console.log(`column is ${column}, and col index is ${indexCol}`);
+	 // console.log(`row is ${row}, and row index is ${indexRow}`);
+	 // 	console.log(`column is ${column}, and col index is ${indexCol}`);
 	
 	
 	playerGrid.forEach(tile=>{
@@ -509,11 +454,11 @@ function getRow(clickedCoord,e,ship){
 		//console.table(tile.id,a,b);
 		// if(noOverlap(clickedCoord,player) && (tile!==e.target) 
 		// 	&& (sameRow||sameCol) && (tileRowIndex<=rowMaxRange) && (tileRowIndex>=rowMinRange) && (tileColIndex<=colMaxRange) && (tileColIndex>=colMinRange)){ 
-
+			// console.log(`inRange: ${inRange(index,range)}`);
 
 		if(noOverlap(clickedCoord,player) && (tile!==e.target) 
 			&& sameRowOrCol(tile.id,row,column) && (inRange(index,range))){
-			
+				
 			tile.classList.add("highlight");
 		// console.log(tile);
 		
@@ -528,82 +473,116 @@ function getRow(clickedCoord,e,ship){
 
 };
 
-function getIndex(tile){
-	
-	let tileRowIndex=grid["row"].indexOf(parseInt(tile.charAt(1)));
-	let tileColIndex=grid["column"].indexOf(tile.charAt(2));
 
-	return [tileRowIndex,tileColIndex];
-}
+//********************************GUESSING*********************************************//
+//check if guess is a hit or miss
 
-function sameRowOrCol(tile,row,column){
-	sameRow = tile.includes(row);
-	sameCol= tile.includes(column);
-	//console.log(`same row or col:${sameRow || sameCol} `);
-	return sameRow || sameCol;
-}
+let guesses = [];
+let  nextguess =[];
+let orderedGuess=[];
+let firstHit, secondHit;
 
-function inRange(index,range){
+opponentGrid.forEach(tile=>{
+	tile.addEventListener("click", checkPlayerGuess);
+});
 
-	[row,column,rowMaxRange,rowMinRange,colMaxRange,colMinRange]=range;
-	[tileRowIndex,tileColIndex]=index;
-
-	 // console.log(`row is ${row}`);
-	 // 	console.log(`column is ${column}`);
-	 // 	console.log(`max distance from row index:${rowMaxRange}`);
-	 // 	console.log(`min distance from row index:${rowMinRange}`);
-	 // 	console.log(`max distance from col index:${colMaxRange}`);
-	 // 	console.log(`Min distance from col index:${colMinRange}`);
-	 // 	console.log(`tileRowIndex is ${tileRowIndex}`);
-	 // 	console.log(`tileColIndex is ${tileColIndex}`);
-
-
-
-	//console.log((tileRowIndex<=rowMaxRange) && (tileRowIndex>=rowMinRange) && (tileColIndex<=colMaxRange) && (tileColIndex>=colMinRange));
-	return (tileRowIndex<=rowMaxRange) && (tileRowIndex>=rowMinRange) && (tileColIndex<=colMaxRange) && (tileColIndex>=colMinRange);
-
-}
-
-//erase ship from grid
-function clearShip(){
-	//resetGuides();
-	nextBtn.disabled=true;
-	console.log(`ship coords before: ${currentShip.coordinates}`);
-	//console.log(`unusedCoords before:${player.unusedCoords}`);
-	currentShip= player.ships[shipIndex];
-	console.log(`current ship: ${currentShip.name}`);
-	let tile;
-	let length = currentShip.coordinates.length;
-	console.log(`length:${length}`);
-	for(let i=length-1; i>=0; i--){
-		console.log(`current ship coord:${currentShip.coordinates[i]}`);
-		
-		//remove from drawing
-		 tile = document.getElementById(`${currentShip.coordinates[i]}`);
-		// tile.classList.add("transparent");
-		 tile.innerHTML="";
-		 resetClasses(tile);
-	
-		//remove from grid
-		let popCoord =currentShip.coordinates.pop();
-		//console.log(`popped coord: ${popCoord}`);
-		player.unusedCoords.push(popCoord);
-
-	};
-	resetGuides();
-	console.log(`ship coords: ${currentShip.coordinates}`);
-	//console.log(`unusedCoords after:${player.unusedCoords}`);
-	
+function checkPlayerGuess(e){
+	console.log(this);
+	let id =e.target.id;
+	if(opponent.unusedCoords.includes(id)){
+		console.log(`Miss on ${id}`);
+		this.style.backgroundColor="white";
+	}else{
+		console.log(`Hit on ${id}`);
+		this.style.backgroundColor="red";
+		hitShip(id,opponent);
+	}
 };
 
-function getNextGuess(lastGuess){
+
+function checkOppGuess(guess){
+	let id = document.getElementById(guess);
+
+	console.log(id.id);
+	if(player.unusedCoords.includes(id.id)){
+		console.log(`Miss on ${id.id}`);
+		// lastHit=false;
+		id.style.backgroundColor="white";
+	}else{
+		console.log(`Hit on ${id.id}`);
+		hitShip(id.id,player);
+		console.log("initializing nextguess");
+		if(!keepGoing){
+			orderedGuess=getOrderedGuess(id.id);
+		}
+	
+		keepGoing=true;
+		//lastHit=true;
+		id.style.backgroundColor="red";
+		
+		
+	}
+	return id.id ;
+}
+
+
+//determine which ship was hit
+function hitShip(id,person){
+	
+	person.ships.forEach(ship=>{
+		if(ship.coordinates.includes(id)){
+			console.log(`${ship.name} was hit!`);
+			if(!firstHit){
+				firstHit=id;
+				console.log(`firstHit is ${firstHit}`);
+			}else{
+				secondHit=id;
+				console.log(`secondHit is ${secondHit}`);
+			}
+			
+			//remove tile from ship's coordinates
+			ship.coordinates.splice((ship.coordinates.findIndex(el=>el===id)),1);
+			console.log(`ship's coordinates length now${ship.coordinates.length}`);
+			//check if sunk
+			hasSunk(ship,person);
+		
+		}
+	})
+	
+}
+//check if ship has sunk
+function hasSunk(ship,person){
+	if(ship.coordinates.length===0){
+		console.log(`${ship.name} has sunk!`);
+		console.log(person.ships.findIndex(el=>el.name===ship.name,1))
+		person.ships.splice(person.ships.findIndex(el=>el.name===ship.name),1);
+		person.ships.forEach(ship=>console.log(`ships include ${ship.name}`));
+			// console.log(`ships are now ${person.ships}`);
+		// lastHit=false;
+		// shipSunk=true;
+		keepGoing=false;
+		firstHit="";
+		secondHit="";
+		nextguess=[];
+		document.getElementById(ship.name).style.textDecoration="line-through";
+	}
+	// }else{
+	// 	// shipSunk=false;	
+	// }
+
+}
+
+//create array of next guesses ordered by hit probability
+function getOrderedGuess(lastGuess){
 	
 	let space = largestShip();
 
 	let range =getMaxRange(lastGuess,space);
 		[row,column]=range;
 		console.log(range);
-		
+	let closest =getMaxRange(lastGuess,2);
+		console.log(closest);
+	nextguess=[];	
 	playerGrid.forEach(tile=>{
 		let index = getIndex(tile.id);
 
@@ -613,9 +592,31 @@ function getNextGuess(lastGuess){
 		// 	console.log(`last was ${lastGuess}, ${coord} passes the tests`); 
 		// }
 		}
+
 	});
 
-	return nextguess;
+	//FIX THIS
+	
+	orderedGuess=[];
+	 for(let i=2; i<=space; i++){ //ship sizes
+		nextguess.forEach(tile=>{
+			closest=getMaxRange(lastGuess,i);
+			let index=getIndex(tile.id);
+			//console.log(orderedGuess.includes(tile));
+			if(!orderedGuess.includes(tile) && inRange(index,closest)){
+				tile.innerHTML=`${i}`;
+				orderedGuess.push(tile);
+			}
+		})
+		
+		console.log(orderedGuess);
+	 }
+
+
+
+	//console.log(orderedGuess);
+
+	return orderedGuess;
 
 }
 
@@ -641,14 +642,24 @@ function makeGuess(lastGuess){
 		// 	}
 		// });
 
-		console.log(nextguess);
-		console.log(nextguess.length);
-		coord=nextguess[0].id;
-		nextguess.shift();
-		console.log("after splicing, nextguess is");
-		console.log(nextguess);
-		console.log(nextguess.length);
+		// console.log(nextguess);
+		console.log(orderedGuess.length);
+		coord=orderedGuess[0].id;
+		orderedGuess.shift();
+		console.log("after splicing, orderedGuess is");
+		console.log(orderedGuess);
+		console.log(orderedGuess.length);
 		//coord ="P"+guess.row+guess.column;
+
+		let [tileRowIndex,tileColIndex]=getIndex(firstHit);
+	 if(secondHit){
+	 	console.log("check for sharedAttr");
+	 	
+	 	let sharedAttr=sameRowOrCol(secondHit,tileRowIndex,tileColIndex);
+	 	console.log(`firstHit:${firstHit}, secondHit:${secondHit}`);
+	 console.log(`sharedAttr  is ${sharedAttr}`);
+	 }
+	 
 	
 	}else{ //guess at random
 		let guess = getRandCoord();
@@ -671,8 +682,7 @@ function makeGuess(lastGuess){
 	
 }
 
-let guesses = [];
-let  nextguess =[];
+
 
 function opponentTurn(){
 	let lastGuess;
@@ -687,22 +697,81 @@ function opponentTurn(){
 
 }
 
+
+
+
+
+/**************************************UTILITY FUNCTIONS******************************************/
+function getIndex(tile){
+	let row = tile.charAt(1);
+	let column=tile.charAt(2);
+	let tileRowIndex=grid["row"].indexOf(parseInt(row));
+	let tileColIndex=grid["column"].indexOf(column);
+
+	//restore these if there's a problem
+	// let tileRowIndex=grid["row"].indexOf(parseInt(tile.charAt(1)));
+	// let tileColIndex=grid["column"].indexOf(tile.charAt(2));
+	// return [tileRowIndex,tileColIndex];
+
+	return [row,column,tileRowIndex,tileColIndex];
+}
+
+function sameRowOrCol(tile,row,column){
+
+	sameRow = tile.includes(row);
+	sameCol= tile.includes(column);
+	//console.log(`same row:${sameRow} sameCol${sameCol}`);
+
+	return sameRow || sameCol;
+}
+
+function inRange(index,range){
+
+	[row,column,rowMaxRange,rowMinRange,colMaxRange,colMinRange]=range;
+	[,,tileRowIndex,tileColIndex]=index;
+
+	 console.log(`row is ${row}`);
+	 	console.log(`column is ${column}`);
+	 	console.log(`max distance from row index:${rowMaxRange}`);
+	 	console.log(`min distance from row index:${rowMinRange}`);
+	 	console.log(`max distance from col index:${colMaxRange}`);
+	 	console.log(`Min distance from col index:${colMinRange}`);
+	 	console.log(`tileRowIndex is ${tileRowIndex}`);
+	 	console.log(`tileColIndex is ${tileColIndex}`);
+
+
+
+	console.log((tileRowIndex<=rowMaxRange) && (tileRowIndex>=rowMinRange) && (tileColIndex<=colMaxRange) && (tileColIndex>=colMinRange));
+	return (tileRowIndex<=rowMaxRange) && (tileRowIndex>=rowMinRange) && (tileColIndex<=colMaxRange) && (tileColIndex>=colMinRange);
+
+}
+
+function noOverlap(coord, person){
+		// console.log(` no overlap coord is ${coord}`);
+		return person.unusedCoords.includes(coord);
+	}
+
 function getMaxRange(coord,size){
 	
 	// console.log(`calculating max range based off ${coord} `);
 
-		let row,column;
-	row=coord.charAt(1);
-	column=coord.charAt(2);
-	let indexRow=grid['row'].indexOf(parseInt(row));
-	let indexCol=grid['column'].indexOf(column);
-	let rowMaxRange=indexRow+(size-1);
-	let rowMinRange=indexRow-(size-1);
-	let colMaxRange=indexCol+(size-1);
-	let colMinRange=indexCol-(size-1);
+
+	//restore these if there's a problem
+	// 	let row,column;
+	// row=coord.charAt(1);
+	// column=coord.charAt(2);
+	// let indexRow=grid['row'].indexOf(parseInt(row));
+	// let indexCol=grid['column'].indexOf(column);
+
+	let [row,column, tileRowIndex, tileColIndex]=getIndex(coord);
+
+	let rowMaxRange=tileRowIndex+(size-1);
+	let rowMinRange=tileRowIndex-(size-1);
+	let colMaxRange=tileColIndex+(size-1);
+	let colMinRange=tileColIndex-(size-1);
 
 
-
+	
 	return [row,column,rowMaxRange,rowMinRange,colMaxRange,colMinRange];
 
 }
@@ -765,3 +834,6 @@ function largestShip(){
 			//initialize array
 			//sinking a ship turns keepgoing OFF and triggers reset
 			//reset
+
+
+			//compare first hit and second hit to see whether they share a row or share a column. only guess tiles that have that same shared attribute.
