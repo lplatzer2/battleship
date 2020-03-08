@@ -510,13 +510,14 @@ function checkOppGuess(guess){
 		id.style.backgroundColor="white";
 	}else{
 		console.log(`Hit on ${id.id}`);
-		hitShip(id.id,player);
 		console.log("initializing nextguess");
 		if(!keepGoing){
 			orderedGuess=getOrderedGuess(id.id);
 		}
-	
+		
 		keepGoing=true;
+		console.log(`keep going is true`);
+		hitShip(id.id,player);
 		//lastHit=true;
 		id.style.backgroundColor="red";
 		
@@ -561,10 +562,12 @@ function hasSunk(ship,person){
 		// lastHit=false;
 		// shipSunk=true;
 		keepGoing=false;
+		console.log(`keep going is false`);
 		firstHit="";
 		secondHit="";
 		nextguess=[];
 		document.getElementById(ship.name).style.textDecoration="line-through";
+	
 	}
 	// }else{
 	// 	// shipSunk=false;	
@@ -643,23 +646,29 @@ function makeGuess(lastGuess){
 		// });
 
 		// console.log(nextguess);
-		console.log(orderedGuess.length);
+		
+
+		//ORDERED GUESS[0].id WAS HERE
+
+
+		//coord ="P"+guess.row+guess.column;
+
+		let [row,column]=getIndex(firstHit);
+	 if(secondHit){
+	 	console.log("check for sharedAttr");
+	 	
+	 	let sharedAttr=getSharedAttr(secondHit,row,column);
+	 	console.log(`firstHit:${firstHit}, secondHit:${secondHit}`);
+	 	console.log(`sharedAttr  is ${sharedAttr}`);
+		orderedGuess= orderedGuess.filter(coord=>coord.id.includes(sharedAttr));
+		console.log(orderedGuess);
+	 }
+	 console.log(orderedGuess.length);
 		coord=orderedGuess[0].id;
 		orderedGuess.shift();
 		console.log("after splicing, orderedGuess is");
 		console.log(orderedGuess);
 		console.log(orderedGuess.length);
-		//coord ="P"+guess.row+guess.column;
-
-		let [tileRowIndex,tileColIndex]=getIndex(firstHit);
-	 if(secondHit){
-	 	console.log("check for sharedAttr");
-	 	
-	 	let sharedAttr=sameRowOrCol(secondHit,tileRowIndex,tileColIndex);
-	 	console.log(`firstHit:${firstHit}, secondHit:${secondHit}`);
-	 console.log(`sharedAttr  is ${sharedAttr}`);
-	 }
-	 
 	
 	}else{ //guess at random
 		let guess = getRandCoord();
@@ -725,23 +734,31 @@ function sameRowOrCol(tile,row,column){
 	return sameRow || sameCol;
 }
 
+function getSharedAttr(tile,row,column){
+	if(tile.includes(row)){
+		return row;
+	}else{
+		return column;
+	}
+}
+
 function inRange(index,range){
 
 	[row,column,rowMaxRange,rowMinRange,colMaxRange,colMinRange]=range;
 	[,,tileRowIndex,tileColIndex]=index;
 
-	 console.log(`row is ${row}`);
-	 	console.log(`column is ${column}`);
-	 	console.log(`max distance from row index:${rowMaxRange}`);
-	 	console.log(`min distance from row index:${rowMinRange}`);
-	 	console.log(`max distance from col index:${colMaxRange}`);
-	 	console.log(`Min distance from col index:${colMinRange}`);
-	 	console.log(`tileRowIndex is ${tileRowIndex}`);
-	 	console.log(`tileColIndex is ${tileColIndex}`);
+	 // console.log(`row is ${row}`);
+	 // 	console.log(`column is ${column}`);
+	 // 	console.log(`max distance from row index:${rowMaxRange}`);
+	 // 	console.log(`min distance from row index:${rowMinRange}`);
+	 // 	console.log(`max distance from col index:${colMaxRange}`);
+	 // 	console.log(`Min distance from col index:${colMinRange}`);
+	 // 	console.log(`tileRowIndex is ${tileRowIndex}`);
+	 // 	console.log(`tileColIndex is ${tileColIndex}`);
 
 
 
-	console.log((tileRowIndex<=rowMaxRange) && (tileRowIndex>=rowMinRange) && (tileColIndex<=colMaxRange) && (tileColIndex>=colMinRange));
+	// console.log((tileRowIndex<=rowMaxRange) && (tileRowIndex>=rowMinRange) && (tileColIndex<=colMaxRange) && (tileColIndex>=colMinRange));
 	return (tileRowIndex<=rowMaxRange) && (tileRowIndex>=rowMinRange) && (tileColIndex<=colMaxRange) && (tileColIndex>=colMinRange);
 
 }
